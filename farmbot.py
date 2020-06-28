@@ -202,6 +202,7 @@ class Farmer():
     self.refills = 0
     self.refilltype = 'rapple' # rapples and gapples
     self.supportce = 'none' # e.g. lunchtime, olgalesson
+    self.supportservant = 'none'
     self.saveframe = False
     
     # List of locations (x,y)
@@ -377,7 +378,7 @@ class Farmer():
       # List of template locations in window
       self.window_menubutton = (1127, 666, 1247, 706) # bluestacks
       self.window_selectsupport = (951, 25, 1199, 57) #(919, 10, 1269, 60)
-      self.window_confirmsetup = (1089, 213, 1179, 258)
+      self.window_confirmsetup = (1090, 213, 1178, 257)
       self.window_startquest = (1119, 657, 1259, 697)
       self.window_attackbutton = (1067, 640, 1207, 680)
       self.window_mcskill = (1137, 255, 1252, 370)
@@ -387,6 +388,8 @@ class Farmer():
       self.window_apokbutton = (779, 539, 904, 589)
       self.window_support1ce = (51, 326, 209, 371)
       self.window_support2ce = (51, 526, 209, 571)
+      self.window_support1servant = (51, 276, 101, 326)
+      self.window_support2servant = (51, 476, 101, 526)
       self.window_lottoresetbox = (1058, 229, 1218, 259)
       self.window_lottoresetclose = (571, 538, 711, 588)
       self.window_retrybutton = (773, 542, 903, 587)
@@ -429,6 +432,10 @@ class Farmer():
       self.tmpl_ce_lesson = cv2.imread(self.path+'templates/blue/ce/lesson.png')
       self.tmpl_ce_training = cv2.imread(self.path+'templates/blue/ce/training.png')
       self.tmpl_ce_davincisoc = cv2.imread(self.path+'templates/blue/ce/davincisoc.png')
+      # Servants also get their own section (for frontlining specific servants)
+      self.tmpl_servant_waver1 = cv2.imread(self.path+'templates/blue/servant/waver1.png')
+      self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
+      self.tmpl_servant_waver3 = cv2.imread(self.path+'templates/blue/servant/waver3.png')
       
       # Magia Record
       self.xy_mr_start = (595,325)
@@ -497,6 +504,7 @@ class Farmer():
     self.tol_fpenhancece = 0.9990
     self.tol_fpenhanceokay = 0.9990
     self.tol_ceselect = 0.9990
+    self.tol_servantselect = 0.9990
       
     # List of triggers for detecting template match
     # CE triggers are created on the fly in selsupport
@@ -773,6 +781,9 @@ class Farmer():
     elif self.supportce == 'second':
       self.cursor.moveclick(self.xy_support2)
       return 0
+    elif self.supportce == 'none' and self.supportservant == 'none':
+      self.cursor.moveclick(self.xy_support1)
+      return 0
     else: # TODO make sure these match the templates
       if self.app == 'nox':
         if self.supportce == 'lunchtime':
@@ -790,9 +801,8 @@ class Farmer():
         elif self.supportce == 'davincisoc':
           trigger_tmpl1 = self.tmpl_ce_davincisoc1
           trigger_tmpl2 = self.tmpl_ce_davincisoc2
-        else: # 'none' just pick first support
-          self.cursor.moveclick(self.xy_support1)
-          return 0
+        else:
+          trigger_tmpl1 = trigger_tmpl2 = None
       elif self.app == 'blue':
         if self.supportce == 'lunchtime':
           trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lunchtime
@@ -804,19 +814,72 @@ class Farmer():
           trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_training
         elif self.supportce == 'davincisoc':
           trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_davincisoc
-        else: # 'none' just pick first support
-          self.cursor.moveclick(self.xy_support1)
-          return 0
+        else:
+          trigger_tmpl1 = trigger_tmpl2 = None
+        if self.supportservant == 'waver':
+          trigger_tmpl3 = self.tmpl_servant_waver1
+          trigger_tmpl4 = self.tmpl_servant_waver2
+          trigger_tmpl5 = self.tmpl_servant_waver3
+        else:
+          trigger_tmpl3 = trigger_tmpl4 = trigger_tmpl5 = None
     # Generate CE templates
-    trigger1 = (self.window_support1ce, trigger_tmpl1, None, self.tol_ceselect)
-    trigger2 = (self.window_support2ce, trigger_tmpl2, None, self.tol_ceselect)
-    # check second support for ce first
-    res = self.checktrigger([trigger2,trigger1])
-    if res == 0:
-      self.cursor.moveclick(self.xy_support2)
-    elif res == 1:
-      self.cursor.moveclick(self.xy_support1)
-    else: # Update support list
+    if trigger_tmpl1 is None:
+      trigger1 = trigger2 = None
+    else:
+      trigger1 = (self.window_support1ce, trigger_tmpl1, None, self.tol_ceselect)
+      trigger2 = (self.window_support2ce, trigger_tmpl2, None, self.tol_ceselect)
+    # Generate Servant templates
+    if trigger_tmpl3 is None:
+      trigger3 = trigger4 = trigger5 = trigger6 = trigger7 = trigger8 = None
+    else:
+      trigger3 = (self.window_support1servant, trigger_tmpl3, None, self.tol_servantselect)
+      trigger4 = (self.window_support1servant, trigger_tmpl4, None, self.tol_servantselect)
+      trigger5 = (self.window_support1servant, trigger_tmpl5, None, self.tol_servantselect)
+      trigger6 = (self.window_support2servant, trigger_tmpl3, None, self.tol_servantselect)
+      trigger7 = (self.window_support2servant, trigger_tmpl4, None, self.tol_servantselect)
+      trigger8 = (self.window_support2servant, trigger_tmpl5, None, self.tol_servantselect)
+    # Check for matches
+    # Priority goes to CEs then servants
+    # (most of the time servants will just be backlined anyway)
+    nomatch = True
+    if trigger1 is None:
+      if trigger3 is None:
+        # 'none' just pick first support
+        self.cursor.moveclick(self.xy_support1)
+        nomatch = False
+      else: # Just look at servant triggers
+        res = self.checktrigger([trigger8,trigger7,trigger6,trigger5,trigger4,trigger3])
+        if res == 0 or res == 1 or res == 2:
+          self.cursor.moveclick(self.xy_support2)
+          nomatch = False
+        elif res == 3 or res == 4 or res == 5:
+          self.cursor.moveclick(self.xy_support1)
+          nomatch = False
+    else:
+       # check match in support 2 first
+      res = self.checktrigger([trigger2])
+      if res == 0:
+        if trigger3 is None:
+          self.cursor.moveclick(self.xy_support2)
+          nomatch = False
+        else: # also check servants
+          res = self.checktrigger([trigger8,trigger7,trigger6])
+          if res == 0 or res == 1 or res == 2:
+            self.cursor.moveclick(self.xy_support2)
+            nomatch = False
+      else:
+        # check support 1 next
+        res = self.checktrigger([trigger1])
+        if res == 0:
+          if trigger3 is None:
+            self.cursor.moveclick(self.xy_support1)
+            nomatch = False
+          else: # also check servants
+            res = self.checktrigger([trigger5,trigger4,trigger3])
+            if res == 0 or res == 1 or res == 2:
+              self.cursor.moveclick(self.xy_support1)
+              nomatch = False
+    if nomatch: # Update support list if nothing matches
       #if not updated:
       while True:
         self.waitadvance(0.5)
@@ -931,12 +994,12 @@ class Farmer():
       self.waitadvance(0.2)
       self.cursor.click(self.xy_next) # just to make sure
       self.waitadvance(0.2)
-      self.cursor.click(self.xy_next) # just to make sure
-      self.waitadvance(0.4)
-      self.cursor.click(self.xy_next) # ladder event extra drop page
-      self.waitadvance(0.2)
-      self.cursor.click(self.xy_next) # just to make sure
-      self.waitadvance(0.2)
+      #self.cursor.click(self.xy_next) # just to make sure
+      #self.waitadvance(0.4)
+      #self.cursor.click(self.xy_next) # ladder event extra drop page
+      #self.waitadvance(0.2)
+      #self.cursor.click(self.xy_next) # just to make sure
+      #self.waitadvance(0.2)
     return res
   
   def playalarm(self):

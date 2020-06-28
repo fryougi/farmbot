@@ -91,13 +91,15 @@ class Flame_Mountain(fb.Farmer):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'gapple' # use gapples for now
-    self.supportce = 'second' # lunchtime
+    self.supportservant = 'waver' # wavers only
+    self.supportce = 'none' # lunchtime
     self.saveframe = False
     while True:
       # Start quest (set it up for the farmer)
-      res = self.startquest()
-      if res < 0:
-        return -1
+      # Repeat quest no longer uses the party screen
+      #res = self.startquest()
+      #if res < 0:
+      #  return -1
       # Battle procedure Wave1
       res = self.wave1()
       if res < 0:
@@ -116,7 +118,7 @@ class Flame_Mountain(fb.Farmer):
         return -1
       self.runs += 1
       # Exit out to main menu if finished
-      if nruns == 1:
+      if self.runs >= nruns:
         res = self.norepeatquest()
         break
       # Repeat quest if not done (automatic refills)
