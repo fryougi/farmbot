@@ -1,0 +1,44 @@
+Locations (x,y):
+
+Node select: (460,120) second/event node, (500, 100) only node
+Friend select: (300, 120) first, (300, 220) second
+CE position: (roughly 50 below selection area (e.g. 170), centered at 65)
+Start quest: (592,338)
+
+Battle:
+Attack: (566, 300)
+EnemyA,B,C: (262, 22), (142, 22), (22, 22)
+MCSkill: (598, 156)
+MCSkill1,2,3: (454, 156), (496, 156), (542, 156)
+SkillA1,2,3: (33, 288), (80, 288), (127, 288)
+SkillB1,2,3: (193, 288), (240, 288), (287, 288)
+SkillC1,2,3: (353, 288), (400, 288), (447, 288)
+TargetA,B,C: (172, 230), (322, 230), (472, 230)
+Card1,2,3,4,5: (66, 260), (192, 260), (318, 260), (444, 260), (580, 260)
+NPA,B,C: (202, 110), (318, 110), (434, 110)
+Swap1,2,3,4,5,6: (67, 175), (167, 175), (267, 175), (367, 175), (467, 175), (567, 175)
+Swap Replace: (320, 313)
+Drop space: (400, 300) (waiting for next)
+Next button: (550, 340)
+
+AP Restore:
+Close button: (318, 310)
+SQ refill: (330, 80)
+GA refill: (330, 155)
+Okay button: (420, 280)
+Cancel button: (220, 280)
+
+Template locations (will need different thresholds for each)
+menubutton: (562, 332, 626, 352)
+selectsupport: (458, 3, 638, 43)
+startquest: (558, 326, 633, 351)
+mcskill: (570, 129, 626, 185) (needs mask)
+	(diff between fields is almost down to .81)
+	(with mask its .977 at low point)
+replacebutton: (279, 302, 363, 324)
+	(diff between dull and bright is .99461 and .99999...)
+nextbutton: (519, 327, 591, 351)
+apclosebutton: (291, 299, 351, 321)
+apokaybutton: (398, 269, 443, 294)
+lunchtime: (26, 164, 104, 186) (first slot)
+olgalesson: (25, 263, 103, 285) (second slot)
