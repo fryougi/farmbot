@@ -6,8 +6,12 @@ Nito
 Lip
 Circe
 """
+# Adding to the system path is needed
+# because no longer in parent directory
+# also because I'm dumb at Python
 import sys, os
 sys.path.append(os.path.abspath('../'))
+
 import farmbot as fb
 
 class Salem_Stake(fb.Farmer):
