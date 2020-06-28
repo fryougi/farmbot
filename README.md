@@ -2,9 +2,9 @@
 
 setup instructions for farmbot.py (may be outdatd at the moment, will try to edit later)
 
-0. ALWAYS SET UP YOUR BIND CODE AFTER TRANSFERING BETWEEN DEVICES
+# ALWAYS SET UP YOUR BIND CODE AFTER TRANSFERING BETWEEN DEVICES
 
-1. Install python
+# Install python
 	I like the anaconda distribution since it comes with the spyder IDE that lets me load/edit/run files all within the same program
 	https://www.anaconda.com/distribution/
 	During the installation, something that may trip up the executables is selecting between a local (user only "Just Me" option) install vs a global (all users) install. It is probably safer to do the user only installation as that'll keep everything sandboxed within your own user folders and installation of packages won't need extra administrator permissions. (it'll go in C:\Users\UserName\Anaconda3). It also makes uninstalling easier. By the way, this was all done on windows 10.
@@ -21,18 +21,18 @@ setup instructions for farmbot.py (may be outdatd at the moment, will try to edi
 		As tested on the 2019.10 version of anaconda, this was the only command that was needed
 	If there's file permission issues, you can also try running in admin mode (just realize that you're running in admin mode)
 
-2. Setup Nox
+# Setup Nox
 	Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size.
 	The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100% (and it should at least be 1280 height? not sure if this is fine if the horizontal version works)
 	One more thing to note: With FGO opened in Nox, it's best to have the spyder IDE window resized to be non-overlapping with it
 	
-2.5 Setup BlueStacks
+# Setup BlueStacks
 	Alternatively, you can set up FGO on BlueStacks.
 	Although you can set the resolution in the BS settings, it doesn't really do anything to change the window size.
 	Set it to tablet (landscape) with 720x1280 resolution anyway.
 	The way the farmbot.py script is currently set up to work, it'll resize the window so that the FGO content is 720x1280
 	
-3. Loading/activating scripts
+# Loading/activating scripts
 	Although farmbot.py is where most of the functionality is, because there's a bunch of different nodes to farm, the actual farming scripts that you'll want to run are separate files.
 	These files (e.g. arakawa.py) are structured to first import the farmbot.py functions, and then define a Farmer specific to the relevant node (Note: whatever you name the class at the top of the script should be the same name used in the "farmer = Class_Name()" at the bottom of the file)
 	This will consist of the individual waves and an outer loop that controls running through the waves in order and refilling between nodes and stuff.
@@ -42,14 +42,14 @@ setup instructions for farmbot.py (may be outdatd at the moment, will try to edi
 	Note: if restarting a script takes forever, it may be due to autoreload issues (you can disable this by unsetting the User Module Reloader (UMR) option for the python interpreter in preferences)
 	Another thing is to enter "%autoreload 0" in the spyder console (this may be needed anyway)
 		
-3.5 Calibrating the screen grab
+# Calibrating the screen grab
 	The menu bar size may be different on some combinations of nox and display size (around line 37 of the farmbot.py file should have a place you can swap out the numbers)
 	Something that can help with setting up Nox is that after you have FGO running on Nox, just activate any farming script (e.g. arakawa.py)
 	After this, you can run the command (without quotes): "farmer.screen.dispframe()" to see what the farmbot is seeing (Note: press any key to exit out of the displayed image instead of pressing the 'X' in the top right, as that'll hang the program and make you have to restart the IDE to reset it)
 	For whatever reason, the correct image you'll want has a single pixel width black line all around it.
 	For bluestacks, it's currently calibrated to a menu bar of 41 pixels, hopefully it'll work on other machines...
 	
-4.a Editing scripts (outer loop)
+# Editing scripts (outer loop)
 	The settings that should need to be changed should be pretty minimal.
 	In a farming script (e.g. arakawa.py), after the "def farm(self,nruns=1)" line, there's a number of things to change
 	The refill type can be one of [rapple,gapple,sapple,bapple]
@@ -58,7 +58,7 @@ setup instructions for farmbot.py (may be outdatd at the moment, will try to edi
 	There is an optional "self.saveframe = True" line you can put to save screenshots of the drops (if this line isn't there, this variable just defaults to False. (screenshots are saved in the "frames" folder)
 	In some of the included files, there's an additonal "farmalarm" function after the "farm" function. This is because Nox crashes, and in the case of a timeout (or regular exit), plays an alarm sound to let you know of a crash in case you're not looking, or sleeping.
 
-4.b Editing scripts (waves)
+# Editing scripts (waves)
 	For the main waves, there are a number of things to edit (e.g. using a skill, swapping using plugsuit, and which NPs/cards to use to clear the wave)
 	- The main block of lines to add/edit is for using skills, and this will look like:
 		res = self.useskill(self.xy_skillc2)
@@ -94,7 +94,7 @@ setup instructions for farmbot.py (may be outdatd at the moment, will try to edi
 		self.usecard(self.xy_card3)
 	There will always be three of these, and the options after the xy_ prefix are: [npa,npb,npc,card1,card2,card3,card4,card5], where the letters and numbers are in left to right order
 	
-5. Running scripts
+# Running scripts
 	After you've edited and loaded the farming script following the above steps, running the script is pretty simple.
 	For the setup, in Nox/FGO, you'll want to open up the node, select a support, and get your team ready to start the quest.
 	In the console, the command to run is "farmer.farm()" to run the node one time, or "farmer.farm(100)" to run it 100 times.
@@ -103,13 +103,13 @@ setup instructions for farmbot.py (may be outdatd at the moment, will try to edi
 	This means that during farming, if you press F6 (you may need to hold down/press it a few times for it to register some times), it should escape from wherever between code blocks the script is at you pressed it (play around with this to get a feel of how much you need to press it, it doesn't check for it all the time, as much as I'd like)
 	For the "farmalarm" option, you'll have to press F6 again to exit out of the alarm. Unfortunately, it's set to check if F6 was pressed between loops of playing the alarm, so you'll have to listen to the alarm at least once (but it's short enough hopefully).
 	
-5.5 Manual selection of support
+# Manual selection of support
 	At the bottom of the farming scripts, I have a "farmer.mainloop(farmer.farm)" line commented out.
 	If you want to manually select support between nodes, this option basically just wraps the "farm" function to run once, giving up control between nodes for manual input.
 	Here, the key it's watching for is <F5> to start each farming run (i.e. you select a support, press F5, wait until it brings you back to the support page, and repeat).
 	I haven't used this function in a while, but it may still work just fine.
 	
-6. Adding templates
+# Adding templates
 	Mostly for CEs, there's a couple of places in the farmbot.py file that need to be edited/added to to let the program know where to look for any new templates.
 	For any given CE, you'll want to take a screenshot of the nox screen (I've just used Snipping Tool, window mode) and crop out the CE (because of weird scaling effects on Nox, you'll need to crop out both the CE in the first slot and the second slot).
 	The screenshots I save in "screencaps/noxfull" folder, and the CE templates in the "templates/noxfull/ce" folder.
