@@ -6,6 +6,8 @@ Nito
 Lip
 Circe
 """
+import sys, os
+sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
 class Salem_Stake(fb.Farmer):
