@@ -188,7 +188,7 @@ class Farmer():
     self.app = app
     self.path = path
     self.cursor = Cursor(self.app)
-    self.screen = Screen(self.cursor.window(), self.app)
+    self.screen = Screen(self.cursor.window(), self.app, self.path)
     # Press F6 to escape out of a run gone awry
     self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
     self.escaped = False
