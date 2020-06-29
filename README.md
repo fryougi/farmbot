@@ -1,34 +1,31 @@
 # farmbot
 
-setup instructions for farmbot.py (may be outdatd at the moment, will try to edit later)
+Setup instructions for farmbot.py (on windows 10).
 
 # ALWAYS SET UP YOUR BIND CODE AFTER TRANSFERING BETWEEN DEVICES
 
 # Install python
-I like the anaconda distribution since it comes with the spyder IDE that lets me load/edit/run files all within the same program (https://www.anaconda.com/distribution/).
-During the installation, something that may trip up the executables is selecting between a local (user only "Just Me" option) install vs a global (all users) install. It is probably safer to do the user only installation as that'll keep everything sandboxed within your own user folders and installation of packages won't need extra administrator permissions. (it'll go in C:\Users\UserName\Anaconda3). It also makes uninstalling easier. By the way, this was all done on windows 10.
+I like the anaconda distribution since it comes with the spyder IDE that lets me load/edit/run files all within the same program (found here: https://www.anaconda.com/distribution/).
 
-Once installed, try opening spyder as a sanity check (the application should just work...).
-The left large window is the editor, and this is where you'll open/edit files
-The bottom right window is the console, and this is where you'll be running commands from the farming scripts
-Although the base installation installs quite a few needed python packages, there are some additional ones that'll need to be installed (like opencv (imported as cv2))
-The import list for the farmbot.py file should let you know what's needed. An easy way to check if you have all the dependencies installed is to open up that file in the editor and run it. It doesn't do anything noticeable if it all works correctly, but if some of the depencencies aren't there, it'll display something like a module missing error in the console.
+During the installation, something that may trip up the executables is selecting between a local (user only "Just Me" option) install vs a global (all users) install. It's recommended to do the user only installation as that'll keep everything sandboxed within your own user folders and installation of packages won't need extra administrator permissions (it'll go in C:\Users\UserName\Anaconda3). It also makes uninstalling easier.
 
-You can install these through the navigator (maybe?) or through the Anaconda prompt using "conda install"
-- pillow is the thing you'd need to search for if PIL isn't installed (but it should be)
-- pywin32 is the one you need for the windows mouse emulation and stuff (but it should be)
-- opencv is the thing you'll need for all the image capture and template matching functions. There seems like there could be a dependency conflict for installing this, so instead of trying to installing it through the navigator or "conda install", install it through the Anaconda Prompt through the following command: pip install opencv-python
+Once installed, try opening spyder as a sanity check (the application should just work...). The left large window is the editor, and this is where you'll open/edit files. The bottom right window is the console, and this is where you'll be running commands from the farming scripts.
 
-# Setup Nox
-Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size.
-The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100% (and it should at least be 1280 height? not sure if this is fine if the horizontal version works)
-One more thing to note: With FGO opened in Nox, it's best to have the spyder IDE window resized to be non-overlapping with it
+Although the base installation installs quite a few needed python packages, there are some additional ones that'll need to be installed. The import list in the farmbot.py file should let you know what's needed. An easy way to check if you have all the dependencies installed is to open up that file in the editor and run it. It doesn't do anything noticeable if it all works correctly, but if some of the depencencies aren't there, it'll display something like a module missing error in the console.
 
-# Setup BlueStacks
-Alternatively, you can set up FGO on BlueStacks (this is now the preferred emulator since it's pixel perfect).
-Although you can set the resolution in the BS settings, it doesn't really do anything to change the window size.
-Set it to tablet (landscape) with 720x1280 resolution anyway.
-The way the farmbot.py script is currently set up to work, it'll resize the window so that the FGO content is 720x1280
+You can install the necessary packages through the Anaconda Navigator (search packages tab) or through the Anaconda prompt using "conda install"
+- `pillow` is the thing you'd need to search for if PIL isn't installed (but it should be)
+- `pywin32` is the one you need for the windows mouse emulation and stuff (but it should be)
+- `opencv` is the thing you'll need for all the image capture and template matching functions. There seems like there could be a dependency conflict for installing this, so instead of trying to installing it through the navigator or "conda install", install it through the Anaconda Prompt through the following command: `pip install opencv-python`
+
+# Setting up emulator
+The farmbot.py was originally developed for use with samsung flow, but that got depricated fast. Then it was developed for use with Nox for a while, until updates happened and the game kept crashing. It's currently being developed for use with Bluestacks, and that's where all the newer templates are. When th emulators are running, it's best to have the Spyder IDE window resized to be non-overlapping with it.
+
+## Setup BlueStacks
+This is the preferred emulator since it's pixel perfect. Although you can set the resolution in the BlueStacks settings, it doesn't really do anything to change the window size. But you can set it to tablet (landscape) with 720x1280 resolution anyway. The way the farmbot.py script is currently set up to work, it'll resize the window so that the content is 720x1280.
+
+## Setup Nox
+Alternatively, you can try to set Nox (but you'll have to get your own templates and stuff). Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size. The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100%. There's some weird cases where if the height of the display is too short, the size of the header bar is rescaled, and this will mess with the screen grab.
 
 # Loading/activating scripts
 Although farmbot.py is where most of the functionality is, because there's a bunch of different nodes to farm, the actual farming scripts that you'll want to run are separate files (now located in /nodes/).
