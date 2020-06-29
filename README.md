@@ -28,9 +28,11 @@ This is the preferred emulator since it's pixel perfect. Although you can set th
 Alternatively, you can try to set Nox (but you'll have to get your own templates and stuff). Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size. The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100%. There's some weird cases where if the height of the display is too short, the size of the menu bar is rescaled, and this will mess with the screen grab.
 
 ## Calibrating the screen grab
-The menu bar size may be different on some combinations of nox and display size (around line 37 of the farmbot.py file should have a place you can swap out the numbers)
-Something that can help with setting up Nox is that after you have FGO running on Nox, just activate any farming script (e.g. arakawa.py)
-After this, you can run the command (in the Spyder console): `farmer.screen.dispframe()` to see what the farmbot is seeing (Note: press any key to exit out of the displayed image instead of pressing the 'X' in the top right, as that'll hang the program and make you have to restart the IDE to reset it)
+The menu bar size may be different on some combinations of nox and display size (around line 37 of the farmbot.py file should have a place you can swap out the numbers).
+
+Something that can help with setting up Nox is that after you have FGO running, just activate any farming script (e.g. arakawa.py).
+After this, you can run the command (in the Spyder console): `farmer.screen.dispframe()` to see what the farmbot is seeing (Note: press any key to exit out of the displayed image instead of pressing the 'X' in the top right, as that'll hang the program and make you have to restart the IDE to reset it).
+
 For nox, the correct image you'll want has a single pixel width black line all around it (its scaling is bad).
 For bluestacks, it's currently calibrated to a menu bar height of 41 pixels, and hopefully you don't have to change this.
 
