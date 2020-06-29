@@ -1,8 +1,8 @@
-# farmbot
+# farmbot.py
 
 Setup instructions for farmbot.py (on windows 10).
 
-# ALWAYS SET UP YOUR BIND CODE AFTER TRANSFERING BETWEEN DEVICES
+**ALWAYS SET UP YOUR BIND CODE AFTER TRANSFERING BETWEEN DEVICES**
 
 # Install python
 I like the anaconda distribution since it comes with the spyder IDE that lets me load/edit/run files all within the same program (found here: https://www.anaconda.com/distribution/).
@@ -14,9 +14,9 @@ Once installed, try opening spyder as a sanity check (the application should jus
 Although the base installation installs quite a few needed python packages, there are some additional ones that'll need to be installed. The import list in the farmbot.py file should let you know what's needed. An easy way to check if you have all the dependencies installed is to open up that file in the editor and run it. It doesn't do anything noticeable if it all works correctly, but if some of the depencencies aren't there, it'll display something like a module missing error in the console.
 
 You can install the necessary packages through the Anaconda Navigator (search packages tab) or through the Anaconda prompt using "conda install"
-- `pillow` is the thing you'd need to search for if PIL isn't installed (but it should be)
-- `pywin32` is the one you need for the windows mouse emulation and stuff (but it should be)
-- `opencv` is the thing you'll need for all the image capture and template matching functions. There seems like there could be a dependency conflict for installing this, so instead of trying to installing it through the navigator or "conda install", install it through the Anaconda Prompt through the following command: `pip install opencv-python`
+ - `pillow` is the thing you'd need to search for if PIL isn't installed (but it should be)
+ - `pywin32` is the one you need for the windows mouse emulation and stuff (but it should be)
+ - `opencv` is the thing you'll need for all the image capture and template matching functions. There seems like there could be a dependency conflict for installing this, so instead of trying to installing it through the navigator or "conda install", install it through the Anaconda Prompt through the following command: `pip install opencv-python`
 
 # Setting up emulator
 The farmbot.py was originally developed for use with samsung flow, but that got depricated fast. Then it was developed for use with Nox for a while, until updates happened and the game kept crashing. It's currently being developed for use with Bluestacks, and that's where all the newer templates are. When th emulators are running, it's best to have the Spyder IDE window resized to be non-overlapping with it.
@@ -25,35 +25,35 @@ The farmbot.py was originally developed for use with samsung flow, but that got 
 This is the preferred emulator since it's pixel perfect. Although you can set the resolution in the BlueStacks settings, it doesn't really do anything to change the window size. But you can set it to tablet (landscape) with 720x1280 resolution anyway. The way the farmbot.py script is currently set up to work, it'll resize the window so that the content is 720x1280.
 
 ## Setup Nox
-Alternatively, you can try to set Nox (but you'll have to get your own templates and stuff). Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size. The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100%. There's some weird cases where if the height of the display is too short, the size of the header bar is rescaled, and this will mess with the screen grab.
+Alternatively, you can try to set Nox (but you'll have to get your own templates and stuff). Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size. The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100%. There's some weird cases where if the height of the display is too short, the size of the menu bar is rescaled, and this will mess with the screen grab.
 
-# Loading/activating scripts
-Although farmbot.py is where most of the functionality is, because there's a bunch of different nodes to farm, the actual farming scripts that you'll want to run are separate files (now located in /nodes/).
-These files (e.g. arakawa.py) are structured to first import the farmbot.py functions, and then define a Farmer specific to the relevant node (Note: whatever you name the class at the top of the script should be the same name used in the "farmer = Class_Name()" at the bottom of the file)
-This will consist of the individual waves and an outer loop that controls running through the waves in order and refilling between nodes and stuff.
-For the most part, you won't need to edit anything in farmbot.py (except for adding new CE templates), and just focus on the functions called within the waves and various settings on which CEs to take, and what to refill with
-
-From the spyder IDE, these files can be run simply by using the run button in the top banner
-(Note: this will simply activate the script not start the actual farming, but will locate where Nox is on the screen and move the mouse to the top-left corner of the menu bar to indicate that it found the nox window)
-Note: if restarting a script takes forever, it may be due to autoreload issues (you can disable this by unsetting the User Module Reloader (UMR) option for the python interpreter in preferences)
-
-# Calibrating the screen grab
+## Calibrating the screen grab
 The menu bar size may be different on some combinations of nox and display size (around line 37 of the farmbot.py file should have a place you can swap out the numbers)
 Something that can help with setting up Nox is that after you have FGO running on Nox, just activate any farming script (e.g. arakawa.py)
-After this, you can run the command (without quotes): "farmer.screen.dispframe()" to see what the farmbot is seeing (Note: press any key to exit out of the displayed image instead of pressing the 'X' in the top right, as that'll hang the program and make you have to restart the IDE to reset it)
-For whatever reason, the correct image you'll want has a single pixel width black line all around it.
-For bluestacks, it's currently calibrated to a menu bar of 41 pixels, hopefully it'll work on other machines...
+After this, you can run the command (in the Spyder console): `farmer.screen.dispframe()` to see what the farmbot is seeing (Note: press any key to exit out of the displayed image instead of pressing the 'X' in the top right, as that'll hang the program and make you have to restart the IDE to reset it)
+For nox, the correct image you'll want has a single pixel width black line all around it (its scaling is bad).
+For bluestacks, it's currently calibrated to a menu bar height of 41 pixels, and hopefully you don't have to change this.
 
-# Editing scripts (outer loop)
+# Using the farming scripts
+Although farmbot.py is where most of the functionality is, because there's a bunch of different nodes to farm, the actual farming scripts that you'll want to run are separate files (located in /nodes/).
+
+## Loading/activating scripts
+These files (e.g. arakawa.py) are structured to first import the farmbot.py functions, and then define a Farmer specific to the relevant node (Note: whatever you name the class at the top of the script should be the same name used in the `farmer = Class_Name()` at the bottom of the file).
+This will consist of the individual waves and an outer loop that controls running through the waves in order and refilling between nodes and stuff.
+For the most part, you won't need to edit anything in farmbot.py (except for adding new CE templates), and just focus on the functions called within the waves and various settings on which CEs to take, and what to refill with.
+
+From the spyder IDE, these files can be run simply by using the run button in the top banner. Note: this will simply activate the script, not start the actual farming, but will locate where Nox/BS is on the screen and move the mouse to the top-left corner of the menu bar to indicate that it found the emulator window.
+
+## Editing scripts (outer loop)
 The settings that should need to be changed should be pretty minimal.
-In a farming script (e.g. arakawa.py), after the "def farm(self,nruns=1)" line, there's a number of things to change
-The refill type can be one of [rapple,gapple,sapple,bapple]
-The support CE depends on the templates available (located in the folder templates/noxfull/ce), and will probably be something like "davincisoc" for the Da Vinci lotto
-If you don't care what support CE is brought, you can also use "first" for this setting (what happens is that if the CE isn't found in the first two supports shown, the script will refresh the support list until it finds one)
-There is an optional "self.saveframe = True" line you can put to save screenshots of the drops (if this line isn't there, this variable just defaults to False. (screenshots are saved in the "frames" folder)
-In some of the included files, there's an additonal "farmalarm" function after the "farm" function. This is because Nox crashes, and in the case of a timeout (or regular exit), plays an alarm sound to let you know of a crash in case you're not looking, or sleeping.
+In a farming script (e.g. arakawa.py), after the `def farm(self,nruns=1)` line, there's a number of things to change:
+ - The refill type can be one of: [rapple,gapple,sapple,bapple]
+ - The support CE depends on the templates available (located in the folder templates/blue/ce), and will probably be something like "davincisoc" for the Da Vinci lotto, or "lunchtime" in general. If you don't care what support CE is brought, you can also use "none" for this setting.
+ - There's also the option for a support servant (templates available in templates/blue/servant), which is only "waver" for now. You can set this if you don't care about the CE, but need a specific servant from the support list. (Note: combining both a servant and a ce will make sure only those combinations are selected, and the script will update the support list until a match is found).
+ - There is an optional `self.saveframe = True` line you can put to save screenshots of the drops (if this line isn't there, this variable just defaults to False. Screenshots are saved in the "frames" folder.
+ - In some of the included files, there's an additonal `farmalarm` function after the `farm` function. This was added because of Nox crashes, and in the case of a timeout (or regular exit), the script plays an alarm sound to let you know of a crash in case you're not looking (or sleeping).
 
-# Editing scripts (waves)
+## Editing scripts (waves)
 For the main waves, there are a number of things to edit (e.g. using a skill, swapping using plugsuit, and which NPs/cards to use to clear the wave)
 
 The main block of lines to add/edit is for using skills, and this will look like:
