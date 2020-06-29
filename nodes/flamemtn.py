@@ -90,7 +90,7 @@ class Flame_Mountain(fb.Farmer):
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
-    self.refilltype = 'gapple' # use gapples for now
+    self.refilltype = 'rapple' # use gapples for now
     self.supportservant = 'waver' # wavers only
     self.supportce = 'none' # lunchtime
     self.saveframe = False
