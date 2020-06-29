@@ -47,7 +47,7 @@ From the spyder IDE, these files can be run simply by using the run button in th
 ## Editing scripts (outer loop)
 The settings that should need to be changed should be pretty minimal.
 In a farming script (e.g. arakawa.py), after the `def farm(self,nruns=1)` line, there's a number of things to change:
- - The refill type can be one of: [rapple,gapple,sapple,bapple]
+ - The refill type can be one of: `[rapple,gapple,sapple,bapple]` (you should be able to guess what these refer to)
  - The support CE depends on the templates available (located in the folder templates/blue/ce), and will probably be something like "davincisoc" for the Da Vinci lotto, or "lunchtime" in general. If you don't care what support CE is brought, you can also use "none" for this setting.
  - There's also the option for a support servant (templates available in templates/blue/servant), which is only "waver" for now. You can set this if you don't care about the CE, but need a specific servant from the support list. (Note: combining both a servant and a ce will make sure only those combinations are selected, and the script will update the support list until a match is found).
  - There is an optional `self.saveframe = True` line you can put to save screenshots of the drops (if this line isn't there, this variable just defaults to False. Screenshots are saved in the "frames" folder.
@@ -56,77 +56,95 @@ In a farming script (e.g. arakawa.py), after the `def farm(self,nruns=1)` line, 
 ## Editing scripts (waves)
 For the main waves, there are a number of things to edit (e.g. using a skill, swapping using plugsuit, and which NPs/cards to use to clear the wave)
 
+### Use skill
 The main block of lines to add/edit is for using skills, and this will look like:
-```
-	res = self.useskill(self.xy_skillc2)
-	if res < 0:
-	  return -1
+```python
+res = self.useskill(self.xy_skillc2)
+if res < 0:
+  return -1
 ```  
-This main block is basically copied/pasted as needed, with the things to edit being the argument that tells the function which skill to use (if you're curious, the res assignment and the check is included so that if you press F6 to exit out at that point in the script, it'll break out of the farming loop)
-The ordering of your servants are: A, B, C (and skills 1,2,3) from left to right on the screen.
-The above example will activate skill 2 of servant C
+This main block is basically copied/pasted as needed, with the things to edit being the argument that tells the function which skill to use (Note: the res assignment and the check is included so that if you press F6 to exit out at that point in the script, it'll break out of the farming loop).
 
+The ordering of your servants are: A, B, C (and skills 1,2,3) from left to right on the screen. The above example will activate skill 2 of servant C.
+
+### MC skill
 To use an MC skill, the code block is slightly different:
+```python
+res = self.usemcskill(self.xy_mcskill1)
+if res < 0:
+  return -1
 ```
-	res = self.usemcskill(self.xy_mcskill1)
-	if res < 0:
-	  return -1
-```	  
 This will activate MC skill 1 (from left to right)
 
+### Plugsuit skill
 To use the plugsuit swap specifically, the code block is:
+```python
+res = self.plugsuit(self.xy_swap3,self.xy_swap4)
+if res < 0:
+  return -1
 ```
-	res = self.plugsuit(self.xy_swap3,self.xy_swap4)
-	if res < 0:
-	  return -1
-```	  
 This will swap servants 3 and 4 (from left to right order)
 
+### Targeted skills
 Some skills have a target, and this code block looks like the following (this should be used after a regular servant skill or an MC skill that has a target to select):
+```python
+res = self.seltarget(self.xy_targetb)
+if res < 0:
+  return -1
 ```
-	res = self.seltarget(self.xy_targetb)
-	if res < 0:
-	  return -1
-```	  
 This will select servant B
 
+### Target enemy
 You can also select an enemy if need be:
+```python
+res = self.selenemy(self.xy_enemyc)
+if res < 0:
+  return -1
 ```
-	res = self.selenemy(self.xy_enemyc)
-	if res < 0:
-	  return -1
-```	  
 Unlike the order of servants, the enemy order is reversed: C, B, A (as A is the default selected enemy)
-To take a closer look at what functions are available here, you can look around line 860 in the farmbot.py file
 
+### Attack card selection
 Finally, after all the skills that are needed have been pressed (if any), there's the card selection after the "attack" codeblock:
-```
+```python
 	self.usecard(self.xy_npa)
 	self.usecard(self.xy_card2)
 	self.usecard(self.xy_card3)
-```	
-There will always be three of these, and the options after the xy_ prefix are: [npa,npb,npc,card1,card2,card3,card4,card5], where the letters and numbers are in left to right order
+```
+There will always be three of these, and the options after the xy_ prefix are: `[npa,npb,npc,card1,card2,card3,card4,card5]`, where the letters and numbers are in left to right order.
 
-# Running scripts
-After you've edited and loaded the farming script following the above steps, running the script is pretty simple.
-For the setup, in Nox/FGO, you'll want to open up the node, select a support, and get your team ready to start the quest.
-In the console, the command to run is "farmer.farm()" to run the node one time, or "farmer.farm(100)" to run it 100 times.
-If you want the farming script to play an alarm if timed out (provided the additional farmalarm function is there), you can run "farmer.farmalarm(300)" to run it 300 times or until whenever Nox crashes.
-To exit out of a farming run, the key that the script is currently set to watch for is <F6>
-This means that during farming, if you press F6 (you may need to hold down/press it a few times for it to register some times), it should escape from wherever between code blocks the script is at you pressed it (play around with this to get a feel of how much you need to press it, it doesn't check for it all the time, as much as I'd like)
-For the "farmalarm" option, you'll have to press F6 again to exit out of the alarm. Unfortunately, it's set to check if F6 was pressed between loops of playing the alarm, so you'll have to listen to the alarm at least once (but it's short enough hopefully).
+## Running scripts
+After you've edited and loaded the farming script following the above steps, running the script is pretty simple. For the setup, in BS/FGO, you'll want to open up the node, select a support, and get your team ready to start the quest.
 
-# Manual selection of support
-At the bottom of the farming scripts, I have a "farmer.mainloop(farmer.farm)" line commented out.
-If you want to manually select support between nodes, this option basically just wraps the "farm" function to run once, giving up control between nodes for manual input.
-Here, the key it's watching for is <F5> to start each farming run (i.e. you select a support, press F5, wait until it brings you back to the support page, and repeat).
-I haven't used this function in a while, but it may still work just fine.
+In the console, the command to run is `farmer.farm()` to run the node one time, or `farmer.farm(100)` to run it 100 times.
+If you want the farming script to play an alarm if timed out (provided the additional farmalarm function is there), you can run `farmer.farmalarm(300)` to run it 300 times or until whenever Nox crashes.
+Since the introduction of repeating quests, after running the farm command, click on the "start quest" button to get things started (the script no longer needs to handle exiting out to menu and reselecting the node between quests, it goes directly into a quest after selecting a new support).
+
+To exit out of a farming run, the key that the script is currently set to watch for is `<F6>`
+This means that during farming, if you press F6 (you may need to hold down/press it a few times for it to register some times), it should escape from wherever between code blocks the script is at you pressed it (play around with this to get a feel of how much you need to press it, it doesn't check for it all the time, as much as I'd like).
+
+For the "farmalarm" option, you'll have to press F6 again to exit out of the alarm. Unfortunately, it's set to check if F6 was pressed between loops of playing the alarm, so you'll have to listen to the alarm at least once (but it's short enough hopefully). BlueStacks doesn't crash like Nox does, so I haven't needed to use this in a while.
+
+## Manual selection of support
+At the bottom of the farming scripts, I have a `farmer.mainloop(farmer.farm)` line commented out. If you want to manually select support between nodes, this option basically just wraps the "farm" function to run once, giving up control between nodes for manual input. Here, the key it's watching for is <F5> to start each farming run (i.e. you select a support, press F5, wait until it brings you back to the support page, and repeat).
+I haven't used this function in a while, it's probably broken at the moment.
 
 # Adding templates
-Mostly for CEs, there's a couple of places in the farmbot.py file that need to be edited/added to to let the program know where to look for any new templates.
-For any given CE, you'll want to take a screenshot of the nox screen (I've just used Snipping Tool, window mode) and crop out the CE (because of weird scaling effects on Nox, you'll need to crop out both the CE in the first slot and the second slot).
-The screenshots I save in "screencaps/noxfull" folder, and the CE templates in the "templates/noxfull/ce" folder.
-To get the dimensions of a template, there's a helper script "getrect.py" that draws a box around where the template is in the screenshot.
-For the CE templates though, I use the same windows for all CEs, so as a sanity check, make sure the output of the getrect.py script matches the following windows:
-	self.window_support1ce = (52, 327, 209, 371)
-	self.window_support2ce = (52, 526, 209, 570)
+Mostly for CEs, there's a couple of places in the farmbot.py file that need to be edited/added to to let the program know where to look for any new templates (marked by TODO).
+
+For any given CE, you'll want to take a screenshot of the game screen (the easiest way is `farmer.screen.saveframe()`). This will be saved in the "frames" folder automatically, but you can move it out to the "screenshots" folder. Open it up in something like GIMP and crop out the CE (Note: because of weird scaling effects on Nox, you'll need to crop out both the CE in the first slot and the second slot). For bluestacks, the dimensions should be 158x45px.
+
+## CE template windows
+To get the window of where the template should be matched, there's a helper script "getrect.py" that draws a box around where the template is in the screenshot.
+For the CE templates, I use the same windows for all CEs, so as a sanity check, make sure the output of the getrect.py script matches the following windows (for Nox):
+```python
+self.window_support1ce = (52, 327, 209, 371)
+self.window_support2ce = (52, 526, 209, 570)
+```
+For BlueStacks, since the templates are pixel perfect, something grabbed in support slot 1 should also work in support slot 2. In any case the windows to check for are:
+```python
+self.window_support1ce = (51, 326, 209, 371)
+self.window_support2ce = (51, 526, 209, 571)
+```
+
+# Other games
+Although the main game that the farmbot was developed for was FGO (since there's no autofarming option), the scripts can be adapted to other games as well, as long as the right templates to match for are collected and the right control logic for repeating nodes is made. Getting locations to click and templates to match and how to go from one to the next is basically the way to edit the script for something new (maybe take a look at the MR scripts for ideas). Note: since the original development was for samsung flow at a resolution of 640x360px, most of the locations are defaulted on this grid and scaled up to the 1280x720px resolution.
