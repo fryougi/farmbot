@@ -8,15 +8,15 @@ Waver (support)
 """
 # Adding to the system path is needed
 # because no longer in parent directory
-# also because I'm dumb at Python
+# and I want to run this file as a script
 import sys, os
 sys.path.append(os.path.abspath('../'))
 
 import farmbot as fb
 
-class Flame_Mountain(fb.Farmer):
+class Flame_Mountain(fb.Farmbot):
   def __init__(self):
-    fb.Farmer.__init__(self,'blue','../frames')
+    fb.Farmbot.__init__(self,'blue','../')
     
   def wave1(self):
     res = self.advancestart()
@@ -97,9 +97,6 @@ class Flame_Mountain(fb.Farmer):
     while True:
       # Start quest (set it up for the farmer)
       # Repeat quest no longer uses the party screen
-      #res = self.startquest()
-      #if res < 0:
-      #  return -1
       # Battle procedure Wave1
       res = self.wave1()
       if res < 0:
@@ -137,7 +134,6 @@ class Flame_Mountain(fb.Farmer):
     self.playalarm()
     return
 
-# Main Loop
-farmer = Flame_Mountain()
-farmer.activate()
-#farmer.mainloop(farmer.farm)
+if __name__ == "__main__":
+  farmer = Flame_Mountain()
+  farmer.activate()

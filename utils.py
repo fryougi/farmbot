@@ -96,7 +96,7 @@ class Cursor():
     self.click(xy)
     
   # Meant to be used for present box, but now filters are a thing
-  # The code here only really works on Nox anyway, there's acceleration
+  # The code here only really worked on Nox anyway, there's acceleration
   # during click/drag which makes the whole process very finicky
   def scroll(self, xy_start, xy_finish, nmoves=40):
     # click
