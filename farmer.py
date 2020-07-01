@@ -6,17 +6,11 @@ Okitan
 Eresh
 Waver (support)
 """
-# Adding to the system path is needed
-# because no longer in parent directory
-# also because I'm dumb at Python
-import sys, os
-sys.path.append(os.path.abspath('../'))
-
 import farmbot as fb
 
-class Flame_Mountain(fb.Farmer):
+class Farmer(fb.Farmbot):
   def __init__(self):
-    fb.Farmer.__init__(self,'blue','../frames')
+    fb.Farmbot.__init__(self)
     
   def wave1(self):
     res = self.advancestart()
@@ -138,6 +132,5 @@ class Flame_Mountain(fb.Farmer):
     return
 
 # Main Loop
-farmer = Flame_Mountain()
+farmer = Farmer()
 farmer.activate()
-#farmer.mainloop(farmer.farm)

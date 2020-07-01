@@ -15,8 +15,6 @@ class Cursor():
     # find window by name
     if self.app == 'blue':
       self.hwnd = win32gui.FindWindow(None, "BlueStacks")
-    elif self.app == 'nox':
-      self.hwnd = win32gui.FindWindow(None, "NoxPlayer")
     if self.hwnd == 0:
       self.rect = (50, 50, 900, 500)
     else:
@@ -35,14 +33,6 @@ class Cursor():
       self.ytop = 42
       self.xtol = 1280
       self.ytol = 720
-    elif app == 'nox':
-      # For Nox, running 1280x720 resolution
-      # Depending on screen resolution, the
-      # Nox menu bar will be sized differently
-      self.xleft = 1
-      self.ytop = 33 #33 #49
-      self.xtol = 1280
-      self.ytol = 720
     # set valid cursor locations
     self.xmin = self.rect[0] + self.xleft
     self.xmax = self.xmin + self.xtol
@@ -59,14 +49,14 @@ class Cursor():
   def window(self):
     return (self.xmin, self.ymin, self.xmax, self.ymax)
   
-  def xytonoxblue(self, xy):
+  def xytoblue(self, xy):
     x = int(round(xy[0]*2))
     y = int(round(xy[1]*2))
     return (x,y)
   
   def rel2abs(self,xy):
     # Convert relative to nox xy (from 640/360)
-    xy = self.xytonoxblue(xy)
+    xy = self.xytoblue(xy)
     # place cursor within bounding box of FGO game
     xabs = self.rect[0] + self.xleft + xy[0]
     yabs = self.rect[1] + self.ytop + xy[1]
@@ -136,14 +126,13 @@ class Cursor():
     
     
 class Screen():
-  def __init__(self, window, app='blue'):
-    self.app = app
+  def __init__(self, window, outdir='frames'):
+    self.outdir = outdir
     self.window = window
     self.frame = PIL.ImageGrab.grab(self.window)
     self.cvframe = numpy.array(self.frame)
     self.cvframe = self.cvframe[:,:,::-1].copy()
-    # TODO: make this configurable?
-    self.framecount = len([name for name in os.listdir('frames') if os.path.isfile(os.path.join('frames',name))])
+    self.framecount = len([name for name in os.listdir(outdir) if os.path.isfile(os.path.join(outdir,name))])
   
   def getframe(self):
     self.frame = PIL.ImageGrab.grab(self.window)
@@ -158,7 +147,7 @@ class Screen():
   def saveframe(self):
     self.framecount +=1
     self.getframe()
-    cv2.imwrite('frames/frame%d.png'% self.framecount, self.cvframe)
+    cv2.imwrite(os.path.join(outdir,'frame%d.png'% self.framecount), self.cvframe)
     
   def matchtmpl(self,window,tmpl,mask,tol):
     cvwnd = self.cvframe[window[1]:window[3],window[0]:window[2]]
