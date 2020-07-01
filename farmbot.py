@@ -119,19 +119,6 @@ class Farmbot():
     self.xy_fpempty = (555,284)
     self.xy_fpokay = (420,284)
     self.xy_expfeed = (270,125)
-    # Raid boss title reset
-    self.xy_newsclose = (622,18)
-    self.xy_fpgainclose = (174,284)
-    self.xy_myroom = (540,325)
-    self.xy_menubutton = (595,343)
-    self.xy_roomscrolluptop = (627,60)
-    self.xy_roomscrollupmid = (627,110)
-    self.xy_roomscrollupbot = (627,160)
-    self.xy_roomscrolldntop = (627,210)
-    self.xy_roomscrolldnmid = (627,260)
-    self.xy_roomscrolldnbot = (627,310)
-    self.xy_returntotitle = (480,250)
-    self.xy_returnokay = (420,284)
     
     # While button locations can be scaled, 
     # image templates are a lot more finicky
@@ -205,7 +192,7 @@ class Farmbot():
       self.tmpl_servant_waver2 = cv2.imread('templates/blue/servant/waver2.png')
       self.tmpl_servant_waver3 = cv2.imread('templates/blue/servant/waver3.png')
       
-      # Additional locations and templates for Magia Record (bluestacks only)
+      # Additional locations and templates for Magia Record
       self.xy_mr_start = (595,325)
       #self.xy_mr_advance = (315,175)
       #self.xy_mr_node = (315,95)
@@ -785,7 +772,7 @@ class Farmbot():
         time.sleep(0.2)
     return 0
 
-  def mainloop(self, farm):
+  def farmloop(self, farm):
     print("Farming: Press F5 to run node, press F6 to quit")
     res = -1
     self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
@@ -794,9 +781,15 @@ class Farmbot():
         break
       self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
       if self.runloop == 1:
+        res = self.startquest()
+        if res < 0:
+          break
         res = farm()
         if res < 0:
           break
+        res = self.nodeselect()
+        if res < 0:
+          break;
         self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
       else: # Wait until next time
         time.sleep(1)
@@ -848,44 +841,7 @@ class Farmbot():
     return selected
   
   # Friend point summoning CE bombs
-  def enhance(self):
-    print("Farming: Press F5 to run node, press F4 to quit")
-    numruns = 0
-    self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-    self.quitloop = win32api.GetAsyncKeyState(win32con.VK_F4)
-    while True:
-      if self.checkescape():
-        numruns = -1
-        break
-      self.quitloop = win32api.GetAsyncKeyState(win32con.VK_F4)
-      if self.quitloop == 1:
-        break
-      self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-      if self.runloop == 1:
-        numruns += 1
-        selected = 0
-        while selected < 20:
-          for yexp in self.xy_expyloc:
-            for xexp in self.xy_expxloc:
-              xy_exp = (xexp,yexp)
-              self.cursor.moveclick(xy_exp)
-              time.sleep(0.02)
-              selected += 1
-              if selected >= 20:
-                break
-            if selected >= 20:
-              break
-        self.cursor.moveclick(self.xy_invokay)
-        time.sleep(0.6)
-        self.cursor.moveclick(self.xy_invenhance)
-        time.sleep(0.4)
-        self.cursor.moveclick(self.xy_invconfirm)
-        self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-      else: # Wait until next time
-        time.sleep(1)
-    return numruns
-  
-  def multenhance(self, num=7):
+  def enhancece(self, num=7):
     numruns = 0
     while numruns < num:
       if self.checkescape():
@@ -942,3 +898,6 @@ class Farmbot():
         return num10xs
     return res
 
+if __name__ == "__main__":
+  farmer = Farmbot()
+  farmer.activate()

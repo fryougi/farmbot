@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Flame Mountain (soap/ring)
-
-Okitan
-Eresh
-Waver (support)
+Farmer for FGO
 """
 import farmbot as fb
 
@@ -91,9 +87,6 @@ class Farmer(fb.Farmbot):
     while True:
       # Start quest (set it up for the farmer)
       # Repeat quest no longer uses the party screen
-      #res = self.startquest()
-      #if res < 0:
-      #  return -1
       # Battle procedure Wave1
       res = self.wave1()
       if res < 0:
@@ -130,7 +123,7 @@ class Farmer(fb.Farmbot):
     print(res)
     self.playalarm()
     return
-
-# Main Loop
-farmer = Farmer()
-farmer.activate()
+  
+if __name__ == "__main__":
+  farmer = Farmer()
+  farmer.activate()
