@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-FGO Auto-farming (BlueStacks Version 1.8)
+FGO Auto-farming (BlueStacks Version 2.0)
 """
 import win32api, win32con, win32gui
 import os, os.path
@@ -9,186 +9,13 @@ import numpy
 import PIL.ImageGrab
 import cv2
 import winsound
-
-
-class Cursor():
-  def __init__(self, app='nox'):
-    self.app = app
-    # find window by name
-    if app == 'nox':
-      self.hwnd = win32gui.FindWindow(None, "NoxPlayer")
-    elif app == 'blue':
-      self.hwnd = win32gui.FindWindow(None, "BlueStacks")
-    if self.hwnd == 0:
-      self.rect = (50, 50, 900, 500)
-    else:
-      if app == 'blue':
-        # resize window because bluestacks is dumb about resolution
-        x0, y0, x1, y1 = win32gui.GetWindowRect(self.hwnd)
-        win32gui.MoveWindow(self.hwnd, x0, y0, 1285, 764, True)
-      self.rect = win32gui.GetWindowPlacement(self.hwnd)[-1]
-    self.xres = win32api.GetSystemMetrics(0)
-    self.yres = win32api.GetSystemMetrics(1)
-    # FGO Screen is 640x360 (16:9 ratio)
-    # (originally developed for samsung smart view)
-    if app == 'nox':
-      # For Nox, running 1280x720 resolution
-      # Depending on screen resolution, the
-      # Nox menu bar will be sized differently
-      self.xleft = 1
-      self.ytop = 33#33 #49
-      self.xtol = 1280
-      self.ytol = 720
-    elif app == 'blue':
-      # Just have horizontal bluestacks
-      self.xleft = 2
-      self.ytop = 42
-      self.xtol = 1280
-      self.ytol = 720
-    # set valid cursor locations
-    self.xmin = self.rect[0] + self.xleft
-    self.xmax = self.xmin + self.xtol
-    self.ymin = self.rect[1] + self.ytop
-    self.ymax = self.ymin + self.ytol
-    
-  def activate(self):
-    # Activate window by clicking it
-    win32api.SetCursorPos((self.rect[0]+10,self.rect[1]+10))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,self.rect[0]+10,self.rect[1]+10,0,0)
-    time.sleep(0.1)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,self.rect[0]+10,self.rect[1]+10,0,0)
-  
-  def window(self):
-    return (self.xmin, self.ymin, self.xmax, self.ymax)
-  
-  def xytonoxblue(self, xy):
-    x = int(round(xy[0]*2))
-    y = int(round(xy[1]*2))
-    return (x,y)
-  
-  def xytoflow(self, xy):
-    x = int(round(xy[0]))
-    y = int(round(xy[1]))
-    return (x,y)
-  
-  def rel2abs(self,xy):
-    # Convert relative to nox xy (from 640/360)
-    xy = self.xytonoxblue(xy)
-    # place cursor within bounding box of FGO game
-    xabs = self.rect[0] + self.xleft + xy[0]
-    yabs = self.rect[1] + self.ytop + xy[1]
-    if xabs < self.xmin:
-      xabs = self.xmin
-    if xabs > self.xmax:
-      xabs = self.xmax
-    if yabs < self.ymin:
-      yabs = self.ymin
-    if yabs > self.ymax:
-      yabs = self.ymax
-    return (xabs, yabs)
-  
-  def click(self,xy,dt=0.015):
-    x, y = self.rel2abs(xy)
-    win32api.SetCursorPos((x,y))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
-    time.sleep(dt)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
-    
-  def moveto(self,xy,nmoves=15):
-    xabs, yabs = self.rel2abs(xy)
-    xcur, ycur = win32gui.GetCursorPos()
-    if xabs == xcur and yabs == ycur:
-      return
-    xpath = numpy.linspace(xcur*65535/self.xres,xabs*65535/self.xres,nmoves)
-    ypath = numpy.linspace(ycur*65535/self.yres,yabs*65535/self.yres,nmoves)
-    for i in range(nmoves):
-      win32api.mouse_event(win32con.MOUSEEVENTF_ABSOLUTE | win32con.MOUSEEVENTF_MOVE,
-                           int(xpath[i]),int(ypath[i]))
-      time.sleep(0.001)
-    win32api.SetCursorPos((xabs,yabs))
-    
-  def moveclick(self,xy):
-    self.moveto(xy)
-    time.sleep(0.05)
-    self.click(xy)
-    
-  # Meant to be used for present box, but now filters are a thing
-  # The code here only really works on Nox anyway, there's acceleration
-  # during click/drag which makes the whole process very finicky
-  def scroll(self, xy_start, xy_finish, nmoves=40):
-    # click
-    self.moveto(xy_start)
-    xstart, ystart = self.rel2abs(xy_start)
-    win32api.SetCursorPos((xstart,ystart))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,xstart,ystart,0,0)
-    time.sleep(0.1)
-    # drag
-    xfinish, yfinish = self.rel2abs(xy_finish)
-    xcur, ycur = win32gui.GetCursorPos()
-    if xfinish == xcur and yfinish == ycur:
-      return
-    xpath = numpy.linspace(xcur*65535/self.xres,xfinish*65535/self.xres,nmoves)
-    ypath = numpy.linspace(ycur*65535/self.yres,yfinish*65535/self.yres,nmoves)
-    for i in range(nmoves):
-      win32api.mouse_event(win32con.MOUSEEVENTF_ABSOLUTE | win32con.MOUSEEVENTF_MOVE |
-                           win32con.MOUSEEVENTF_LEFTDOWN, int(xpath[i]),int(ypath[i]))
-      time.sleep(0.015)
-    win32api.SetCursorPos((xfinish,yfinish))
-    # release
-    win32api.mouse_event(win32con.MOUSEEVENTF_ABSOLUTE | win32con.MOUSEEVENTF_MOVE |
-                         win32con.MOUSEEVENTF_LEFTDOWN, int(xpath[nmoves-1]),int(ypath[nmoves-1]))
-    time.sleep(0.2)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,xfinish,yfinish,0,0)
-    time.sleep(0.1)
-    
-    
-class Screen():
-  def __init__(self, window, app='nox', path='../'):
-    self.app = app
-    self.path = path
-    self.window = window
-    self.frame = PIL.ImageGrab.grab(self.window)
-    self.cvframe = numpy.array(self.frame)
-    self.cvframe = self.cvframe[:,:,::-1].copy()
-    # TODO: make this configurable?
-    self.framecount = len([name for name in os.listdir(self.path+'frames') if os.path.isfile(os.path.join(self.path,'frames',name))])
-  
-  def getframe(self):
-    self.frame = PIL.ImageGrab.grab(self.window)
-    self.cvframe = numpy.array(self.frame)
-    self.cvframe = self.cvframe[:,:,::-1].copy()
-  
-  def dispframe(self):
-    cv2.imshow('cvframe',self.cvframe)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
-  def saveframe(self):
-    self.framecount +=1
-    self.getframe()
-    cv2.imwrite(self.path+'frames/frame%d.png'% self.framecount, self.cvframe)
-    
-  def matchtmpl(self,window,tmpl,mask,tol):
-    cvwnd = self.cvframe[window[1]:window[3],window[0]:window[2]]
-    h,w,_ = tmpl.shape
-    if mask is None:
-      res = cv2.matchTemplate(cvwnd, tmpl, cv2.TM_CCORR_NORMED)
-    else:
-      data = numpy.zeros((h,w,3),dtype=numpy.uint8)
-      res = cv2.matchTemplate(cvwnd, tmpl, cv2.TM_CCORR_NORMED, data, mask)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    return max_val > tol
-
-#cursor = Cursor()
-#screen = Screen(cursor.window())
-
+from utils import Cursor, Screen
 
 class Farmer():
-  def __init__(self, app='nox', path='../'):
+  def __init__(self, app='blue'):
     self.app = app
-    self.path = path
     self.cursor = Cursor(self.app)
-    self.screen = Screen(self.cursor.window(), self.app, self.path)
+    self.screen = Screen(self.cursor.window(), self.app)
     # Press F6 to escape out of a run gone awry
     self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
     self.escaped = False
@@ -202,7 +29,7 @@ class Farmer():
     self.refills = 0
     self.refilltype = 'rapple' # rapples and gapples
     self.supportce = 'none' # e.g. lunchtime, olgalesson
-    self.supportservant = 'none'
+    self.supportservant = 'none' # e.g. waver, skadi
     self.saveframe = False
     
     # List of locations (x,y)
@@ -316,65 +143,8 @@ class Farmer():
     
     # TODO: add CEs as needed (also update selsupport accordingly)
     # CEs need a template to read them and a tolerance (may be common)
-    
-    if self.app == 'nox':
-      # List of template locations in window
-      self.window_menubutton = (1127, 661, 1247, 701) # nox full
-      self.window_selectsupport = (915, 5, 1275, 85)
-      self.window_confirmsetup = (1086, 212, 1178, 258)
-      self.window_startquest = (1118, 656, 1258, 696)
-      self.window_attackbutton = (1067, 633, 1207, 678)
-      self.window_mcskill = (1134, 254, 1254, 372)
-      self.window_replacebutton = (561, 600, 721, 650)
-      self.window_nextbutton = (1038, 653, 1178, 703)
-      self.window_apclosebutton = (562, 594, 712, 644)
-      self.window_apokbutton = (769, 538, 919, 588)
-      self.window_support1ce = (52, 327, 209, 371)
-      self.window_support2ce = (52, 526, 209, 570)
-      self.window_lottoresetbox = (1060, 228, 1210, 261)
-      self.window_lottoresetclose = (566, 536, 716, 586)
-      self.window_retrybutton = (768, 542, 908, 587)
-      self.window_updateclose = (565, 540, 715, 585)
-      self.window_fp10xsummon = (726, 513, 926, 593)
-      self.window_fpsummonokay = (760, 541, 925, 586)
-      self.window_fpsummoncont = (685, 648, 844, 698)
-      self.window_fpsummonclose = (566, 538, 716, 588)
-      self.window_fpenhancece = (934, 6, 1274, 66)
-      self.window_fpenhanceokay = (769, 565, 919, 615)
-      # List of template images
-      self.tmpl_menubutton = cv2.imread(self.path+'templates/nox/menubutton.png')
-      self.tmpl_selectsupport = cv2.imread(self.path+'templates/nox/selectsupport.png')
-      self.tmpl_confirmsetup = cv2.imread(self.path+'templates/nox/confirmsetup.png')
-      self.tmpl_startquest = cv2.imread(self.path+'templates/nox/startquest.png')
-      self.tmpl_attackbutton = cv2.imread(self.path+'templates/nox/attackbutton.png')
-      self.tmpl_mcskill = cv2.imread(self.path+'templates/nox/mcskill.png')
-      self.tmpl_mcskillmask = cv2.imread(self.path+'templates/nox/mcskillmask.png')
-      self.tmpl_replacebutton = cv2.imread(self.path+'templates/nox/replacebutton.png')
-      self.tmpl_nextbutton = cv2.imread(self.path+'templates/nox/nextbutton.png')
-      self.tmpl_apclosebutton = cv2.imread(self.path+'templates/nox/apclosebutton.png')
-      self.tmpl_apokbutton = cv2.imread(self.path+'templates/nox/apokbutton.png')
-      self.tmpl_lottoresetbox = cv2.imread(self.path+'templates/nox/lottoresetbox.png')
-      self.tmpl_lottoresetclose = cv2.imread(self.path+'templates/nox/lottoresetclose.png')
-      self.tmpl_retrybutton = cv2.imread(self.path+'templates/nox/retrybutton.png')
-      self.tmpl_updateclose = cv2.imread(self.path+'templates/nox/updateclose.png')
-      self.tmpl_fp10xsummon = cv2.imread(self.path+'templates/nox/fp10xsummon.png')
-      self.tmpl_fpsummonokay = cv2.imread(self.path+'templates/nox/fpsummonokay.png')
-      self.tmpl_fpsummoncont = cv2.imread(self.path+'templates/nox/fpsummoncont.png')
-      self.tmpl_fpsummonclose = cv2.imread(self.path+'templates/nox/fpsummonclose.png')
-      self.tmpl_fpenhancece = cv2.imread(self.path+'templates/nox/fpenhancece.png')
-      self.tmpl_fpenhanceokay = cv2.imread(self.path+'templates/nox/fpenhanceokay.png')
-      # CEs (for full resolution, each location needs its own template)
-      self.tmpl_ce_lunchtime1 = cv2.imread(self.path+'templates/nox/ce/lunchtime1.png')
-      self.tmpl_ce_lunchtime2 = cv2.imread(self.path+'templates/nox/ce/lunchtime2.png')
-      self.tmpl_ce_monalisa1 = cv2.imread(self.path+'templates/nox/ce/monalisa1.png')
-      self.tmpl_ce_monalisa2 = cv2.imread(self.path+'templates/nox/ce/monalisa2.png')
-      self.tmpl_ce_nerocheer1 = cv2.imread(self.path+'templates/nox/ce/nerocheer1.png')
-      self.tmpl_ce_nerocheer2 = cv2.imread(self.path+'templates/nox/ce/nerocheer2.png')
-      self.tmpl_ce_xmasmerry1 = cv2.imread(self.path+'templates/nox/ce/xmasmerry1.png')
-      self.tmpl_ce_xmasmerry2 = cv2.imread(self.path+'templates/nox/ce/xmasmerry2.png')
-      self.tmpl_ce_davincisoc1 = cv2.imread(self.path+'templates/nox/ce/davincisoc1.png')
-      self.tmpl_ce_davincisoc2 = cv2.imread(self.path+'templates/nox/ce/davincisoc2.png')
-    elif self.app == 'blue':
+
+    if self.app == 'blue':
       # List of template locations in window
       self.window_menubutton = (1127, 666, 1247, 706) # bluestacks
       self.window_selectsupport = (951, 25, 1199, 57) #(919, 10, 1269, 60)
@@ -437,7 +207,7 @@ class Farmer():
       self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
       self.tmpl_servant_waver3 = cv2.imread(self.path+'templates/blue/servant/waver3.png')
       
-      # Magia Record
+      # Additional locations and templates for Magia Record (bluestacks only)
       self.xy_mr_start = (595,325)
       #self.xy_mr_advance = (315,175)
       #self.xy_mr_node = (315,95)
@@ -475,6 +245,65 @@ class Farmer():
       self.trigger_mr_startbutton = (self.window_mr_startbutton, self.tmpl_mr_startbutton, None, 0.9990)
       self.trigger_mr_battleclear = (self.window_mr_battleclear, self.tmpl_mr_battleclear, None, 0.9990)
       self.trigger_mr_playagain = (self.window_mr_playagain, self.tmpl_mr_playagain, None, 0.9990)
+          
+    elif self.app == 'nox':
+      # List of template locations in window
+      self.window_menubutton = (1127, 661, 1247, 701) # nox full
+      self.window_selectsupport = (915, 5, 1275, 85)
+      self.window_confirmsetup = (1086, 212, 1178, 258)
+      self.window_startquest = (1118, 656, 1258, 696)
+      self.window_attackbutton = (1067, 633, 1207, 678)
+      self.window_mcskill = (1134, 254, 1254, 372)
+      self.window_replacebutton = (561, 600, 721, 650)
+      self.window_nextbutton = (1038, 653, 1178, 703)
+      self.window_apclosebutton = (562, 594, 712, 644)
+      self.window_apokbutton = (769, 538, 919, 588)
+      self.window_support1ce = (52, 327, 209, 371)
+      self.window_support2ce = (52, 526, 209, 570)
+      self.window_lottoresetbox = (1060, 228, 1210, 261)
+      self.window_lottoresetclose = (566, 536, 716, 586)
+      self.window_retrybutton = (768, 542, 908, 587)
+      self.window_updateclose = (565, 540, 715, 585)
+      self.window_fp10xsummon = (726, 513, 926, 593)
+      self.window_fpsummonokay = (760, 541, 925, 586)
+      self.window_fpsummoncont = (685, 648, 844, 698)
+      self.window_fpsummonclose = (566, 538, 716, 588)
+      self.window_fpenhancece = (934, 6, 1274, 66)
+      self.window_fpenhanceokay = (769, 565, 919, 615)
+      # List of template images
+      self.tmpl_menubutton = cv2.imread(self.path+'templates/nox/menubutton.png')
+      self.tmpl_selectsupport = cv2.imread(self.path+'templates/nox/selectsupport.png')
+      self.tmpl_confirmsetup = cv2.imread(self.path+'templates/nox/confirmsetup.png')
+      self.tmpl_startquest = cv2.imread(self.path+'templates/nox/startquest.png')
+      self.tmpl_attackbutton = cv2.imread(self.path+'templates/nox/attackbutton.png')
+      self.tmpl_mcskill = cv2.imread(self.path+'templates/nox/mcskill.png')
+      self.tmpl_mcskillmask = cv2.imread(self.path+'templates/nox/mcskillmask.png')
+      self.tmpl_replacebutton = cv2.imread(self.path+'templates/nox/replacebutton.png')
+      self.tmpl_nextbutton = cv2.imread(self.path+'templates/nox/nextbutton.png')
+      self.tmpl_apclosebutton = cv2.imread(self.path+'templates/nox/apclosebutton.png')
+      self.tmpl_apokbutton = cv2.imread(self.path+'templates/nox/apokbutton.png')
+      self.tmpl_lottoresetbox = cv2.imread(self.path+'templates/nox/lottoresetbox.png')
+      self.tmpl_lottoresetclose = cv2.imread(self.path+'templates/nox/lottoresetclose.png')
+      self.tmpl_retrybutton = cv2.imread(self.path+'templates/nox/retrybutton.png')
+      self.tmpl_updateclose = cv2.imread(self.path+'templates/nox/updateclose.png')
+      self.tmpl_fp10xsummon = cv2.imread(self.path+'templates/nox/fp10xsummon.png')
+      self.tmpl_fpsummonokay = cv2.imread(self.path+'templates/nox/fpsummonokay.png')
+      self.tmpl_fpsummoncont = cv2.imread(self.path+'templates/nox/fpsummoncont.png')
+      self.tmpl_fpsummonclose = cv2.imread(self.path+'templates/nox/fpsummonclose.png')
+      self.tmpl_fpenhancece = cv2.imread(self.path+'templates/nox/fpenhancece.png')
+      self.tmpl_fpenhanceokay = cv2.imread(self.path+'templates/nox/fpenhanceokay.png')
+      # CEs (for full resolution, each location needs its own template)
+      self.tmpl_ce_lunchtime1 = cv2.imread(self.path+'templates/nox/ce/lunchtime1.png')
+      self.tmpl_ce_lunchtime2 = cv2.imread(self.path+'templates/nox/ce/lunchtime2.png')
+      self.tmpl_ce_monalisa1 = cv2.imread(self.path+'templates/nox/ce/monalisa1.png')
+      self.tmpl_ce_monalisa2 = cv2.imread(self.path+'templates/nox/ce/monalisa2.png')
+      self.tmpl_ce_nerocheer1 = cv2.imread(self.path+'templates/nox/ce/nerocheer1.png')
+      self.tmpl_ce_nerocheer2 = cv2.imread(self.path+'templates/nox/ce/nerocheer2.png')
+      self.tmpl_ce_xmasmerry1 = cv2.imread(self.path+'templates/nox/ce/xmasmerry1.png')
+      self.tmpl_ce_xmasmerry2 = cv2.imread(self.path+'templates/nox/ce/xmasmerry2.png')
+      self.tmpl_ce_davincisoc1 = cv2.imread(self.path+'templates/nox/ce/davincisoc1.png')
+      self.tmpl_ce_davincisoc2 = cv2.imread(self.path+'templates/nox/ce/davincisoc2.png')
+      
     else:
       # fail on other applications
       print("application {} not supported".format(self.app))
@@ -1172,3 +1001,4 @@ class Farmer():
       elif res == 1:
         return num10xs
     return res
+
