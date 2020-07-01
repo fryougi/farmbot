@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Salem (Stakes)
+Shimosa Arakawa Field (gallstones)
 
-Nito
-Lip
-Circe
+Servant A: Arash (element)
+Servant B: Arjuna
+Servant C: Carmilla
+Servant D: Fujino
+Mystic Code: Blonde
 """
 # Adding to the system path is needed
 # because no longer in parent directory
@@ -14,7 +16,7 @@ sys.path.append(os.path.abspath('../'))
 
 import farmbot as fb
 
-class Salem_Stake(fb.Farmer):
+class Shimosa_Arakawa(fb.Farmer):
   def __init__(self):
     fb.Farmer.__init__(self,'blue')
     
@@ -22,7 +24,7 @@ class Salem_Stake(fb.Farmer):
     res = self.advancestart()
     if res < 0:
       return -1
-    res = self.useskill(self.xy_skillc1)
+    res = self.useskill(self.xy_skilla3)
     if res < 0:
       return -1
     res = self.attack()
@@ -30,17 +32,17 @@ class Salem_Stake(fb.Farmer):
       return -1
     self.usecard(self.xy_npa)
     self.usecard(self.xy_card3)
-    self.usecard(self.xy_npc)
+    self.usecard(self.xy_npb)
     return 0
   
   def wave2(self):
     res = self.advancewave()
     if res < 0:
       return -1
-    res = self.useskill(self.xy_skilla2)
+    res = self.useskill(self.xy_skilla3)
     if res < 0:
       return -1
-    res = self.useskill(self.xy_skillb3)
+    res = self.useskill(self.xy_skillc2)
     if res < 0:
       return -1
     res = self.attack()
@@ -48,17 +50,20 @@ class Salem_Stake(fb.Farmer):
       return -1
     self.usecard(self.xy_npa)
     self.usecard(self.xy_card3)
-    self.usecard(self.xy_npc)
+    self.usecard(self.xy_card4)
     return 0
   
   def wave3(self):
     res = self.advancewave()
     if res < 0:
       return -1
+    res = self.useskill(self.xy_skillb3)
+    if res < 0:
+      return -1
     res = self.usemcskill(self.xy_mcskill2)
     if res < 0:
       return -1
-    res = self.seltarget(self.xy_targetb)
+    res = self.seltarget(self.xy_targetc)
     if res < 0:
       return -1
     res = self.attack()
@@ -73,8 +78,8 @@ class Salem_Stake(fb.Farmer):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # use gapples for now
-    self.supportce = 'second' # lunchtime
-    self.saveframe = False
+    self.supportservant = 'waver' # wavers only
+    self.supportce = 'none' # lunchtime
     while True:
       # Start quest (set it up for the farmer)
       # Repeat quest no longer uses the party screen
@@ -108,17 +113,9 @@ class Salem_Stake(fb.Farmer):
         return -1
       # Select new support
       res = self.selectsupport()
-      if res < 0:
-        return -1
     return self.runs
 
-  def farmalarm(self, nruns=1):
-    res = self.farm(nruns)
-    print(res)
-    self.playalarm()
-    return
-
 # Main Loop
-farmer = Salem_Stake()
+farmer = Shimosa_Arakawa()
 farmer.activate()
 #farmer.mainloop(farmer.farm)

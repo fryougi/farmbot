@@ -581,6 +581,7 @@ class Farmer():
   def waituntiltrigger(self,triggers):
     res = -1
     self.timer = 0.0
+    self.retries = 1
     while (res < 0):
       t = self.waitadvance(0.05)
       if t < 0:
@@ -598,7 +599,7 @@ class Farmer():
       if self.timer > self.timeout:
         self.waitadvance(2)
         res = self.checktrigger([self.trigger_retrybutton])
-        if res >= 0 and self.retries < 1:
+        if res >= 0 and self.retries < 2:
           self.cursor.moveclick(self.xy_connretry)
           self.timer = 0 # Reset the timer upon retry
           self.retries += 1
@@ -634,6 +635,7 @@ class Farmer():
     self.waitadvance(0.1)
     res = -1
     self.timer = 0.0
+    self.retries = 1
     while (res < 0):
       t = self.waitadvance(0.05)
       if t < 0:
@@ -655,7 +657,7 @@ class Farmer():
       if self.timer > self.timeout:
         self.waitadvance(2)
         res = self.checktrigger([self.trigger_retrybutton])
-        if res >= 0 and self.retries < 1:
+        if res >= 0 and self.retries < 2:
           self.cursor.moveclick(self.xy_connretry)
           self.timer = 0 # Reset the timer upon retry
           self.retries += 1
