@@ -17,7 +17,7 @@ class Farmer(fb.Farmbot):
     res = self.advancestart()
     if res < 0:
       return -1
-    # Skills selection
+    # Skills selection (may be empty)
     res = self.useskill(self.xy_skilla2)
     if res < 0:
       return -1
@@ -28,7 +28,7 @@ class Farmer(fb.Farmbot):
     res = self.attack()
     if res < 0:
       return -1
-    # Card selection
+    # Card selection (pick 3)
     self.usecard(self.xy_npa)
     self.usecard(self.xy_card2)
     self.usecard(self.xy_card3)
@@ -38,7 +38,7 @@ class Farmer(fb.Farmbot):
     res = self.advancewave()
     if res < 0:
       return -1
-    # Skills selection
+    # Skills selection (may be empty)
     res = self.selenemy(self.xy_enemyc)
     if res < 0:
       return -1
@@ -52,7 +52,7 @@ class Farmer(fb.Farmbot):
     res = self.attack()
     if res < 0:
       return -1
-    # Card selection
+    # Card selection (pick 3)
     self.usecard(self.xy_npb)
     self.usecard(self.xy_card3)
     self.usecard(self.xy_card4)
@@ -62,7 +62,7 @@ class Farmer(fb.Farmbot):
     res = self.advancewave()
     if res < 0:
       return -1
-    # Skills selection
+    # Skills selection (may be empty)
     res = self.usemcskill(self.xy_mcskill2)
     if res < 0:
       return -1
@@ -73,7 +73,7 @@ class Farmer(fb.Farmbot):
     res = self.attack()
     if res < 0:
       return -1
-    # Card selection
+    # Card selection (pick 3)
     self.usecard(self.xy_npc)
     self.usecard(self.xy_card4)
     self.usecard(self.xy_card3)
