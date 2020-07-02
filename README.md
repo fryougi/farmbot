@@ -19,10 +19,10 @@ You can install the necessary packages through the Anaconda Navigator (search pa
  - `opencv` is the thing you'll need for all the image capture and template matching functions. There seems like there could be a dependency conflict for installing this, so instead of trying to installing it through the navigator or "conda install", install it through the Anaconda Prompt through the following command: `pip install opencv-python`
 
 # Setting up emulator
-The farmbot.py was originally developed for use with samsung flow, but that got depricated fast. Then it was developed for use with Nox for a while, until updates happened and the game kept crashing. It's currently being developed for use with Bluestacks, and that's where all the newer templates are. When th emulators are running, it's best to have the Spyder IDE window resized to be non-overlapping with it.
+The farmbot.py was originally developed for use with samsung flow, but that got depricated fast. Then it was developed for use with Nox for a while, until updates happened and the game kept crashing. It's currently being developed for use with Bluestacks, and that's where all the newer templates are. When the emulators are running, it's best to have the Spyder IDE window resized to be non-overlapping with it.
 
 ## Setup BlueStacks
-This is the preferred emulator since it's pixel perfect. Although you can set the resolution in the BlueStacks settings, it doesn't really do anything to change the window size. But you can set it to tablet (landscape) with 720x1280 resolution anyway. The way the farmbot.py script is currently set up to work, it'll resize the window so that the content is 720x1280.
+This is the preferred (and currently only supported) emulator since it's pixel perfect. Although you can set the resolution in the BlueStacks settings, it doesn't really do anything to change the window size. But you can set it to tablet (landscape) with 720x1280 resolution anyway. The way the farmbot.py script is currently set up to work, it'll resize the window so that the content is 720x1280.
 
 ## Setup Nox
 Alternatively, you can try to set Nox (but you'll have to get your own templates and stuff). Due to the way templates get matched, the resolution of Nox needs to be set specifically so that the image grab is of the right size. The resolution should be 720x1280, and for the most hassle free results, the scaling of the display resolution should just be 100%. There's some weird cases where if the height of the display is too short, the size of the menu bar is rescaled, and this will mess with the screen grab.
@@ -108,9 +108,9 @@ Unlike the order of servants, the enemy order is reversed: C, B, A (as A is the 
 ### Attack card selection
 Finally, after all the skills that are needed have been pressed (if any), there's the card selection after the "attack" codeblock:
 ```python
-	self.usecard(self.xy_npa)
-	self.usecard(self.xy_card2)
-	self.usecard(self.xy_card3)
+self.usecard(self.xy_npa)
+self.usecard(self.xy_card2)
+self.usecard(self.xy_card3)
 ```
 There will always be three of these, and the options after the xy_ prefix are: `[npa,npb,npc,card1,card2,card3,card4,card5]`, where the letters and numbers are in left to right order.
 
