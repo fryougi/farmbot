@@ -516,7 +516,7 @@ class Farmbot(Controller):
     return res
   
   def getwave(self):
-    wavetext = windowtextocr(self.ocrwindow_wavetext, invert=True)
+    wavetext = self.windowtextocr(self.ocrwindow_wavetext, invert=True)
     if wavetext is None:
       return 0
     else:
@@ -532,7 +532,7 @@ class Farmbot(Controller):
   def cardcleanup(self,wave):
     res = self.clickuntiltrigger([self.trigger_attackbutton, self.trigger_nextbutton], self.xy_clickwave)
     if res == 0:
-      if wave == getwave():
+      if wave == self.getwave():
         res = self.attack()
         if res < 0:
           return -1
