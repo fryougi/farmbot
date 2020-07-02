@@ -10,15 +10,14 @@ Mystic Code: Blonde
 """
 # Adding to the system path is needed
 # because no longer in parent directory
-# also because I'm dumb at Python
+# and I want to run this file as a script
 import sys, os
 sys.path.append(os.path.abspath('../'))
-
 import farmbot as fb
 
-class Shimosa_Arakawa(fb.Farmer):
+class Shimosa_Arakawa(fb.Farmbot):
   def __init__(self):
-    fb.Farmer.__init__(self,'blue')
+    fb.Farmbot.__init__(self,'blue','../')
     
   def wave1(self):
     res = self.advancestart()
@@ -115,7 +114,6 @@ class Shimosa_Arakawa(fb.Farmer):
       res = self.selectsupport()
     return self.runs
 
-# Main Loop
-farmer = Shimosa_Arakawa()
-farmer.activate()
-#farmer.mainloop(farmer.farm)
+if __name__ == "__main__":
+  farmer = Shimosa_Arakawa()
+  farmer.activate()
