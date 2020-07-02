@@ -521,6 +521,7 @@ class Farmbot(Controller):
   def getwave(self):
     wavetext = self.windowtextocr(self.ocrwindow_wavetext, invert=True)
     if wavetext is None:
+      print("Warning: OCR not functioning")
       return 0
     else:
       if wavetext[0] == '1':
@@ -530,12 +531,15 @@ class Farmbot(Controller):
       elif wavetext[0] == '3':
         return 3
       else:
+        print("Warning: OCR not functioning")
         return 0
       
-  def cardcleanup(self,wave):
+  def cardcleanup(self,wave,warn=False):
     res = self.clickuntiltrigger([self.trigger_attackbutton, self.trigger_nextbutton], self.xy_clickwave)
     if res == 0:
       if wave == self.getwave():
+        if warn:          
+          print("Warning: Card cleanup needed on wave {}".format(wave))
         res = self.attack()
         if res < 0:
           return -1
