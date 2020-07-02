@@ -11,6 +11,7 @@ import PIL.ImageGrab
 import cv2
 
 # Tesseract OCR
+# Accuracy of this is pretty bad...
 import sys, shutil
 try:
   import pytesseract
@@ -167,6 +168,17 @@ class Screen():
       res = cv2.matchTemplate(cvwnd, tmpl, cv2.TM_CCORR_NORMED, data, mask)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     return max_val > tol
+  
+  def corrtmpl(self,window,tmpl,mask):
+    cvwnd = self.cvframe[window[1]:window[3],window[0]:window[2]]
+    h,w,_ = tmpl.shape
+    if mask is None:
+      res = cv2.matchTemplate(cvwnd, tmpl, cv2.TM_CCORR_NORMED)
+    else:
+      data = numpy.zeros((h,w,3),dtype=numpy.uint8)
+      res = cv2.matchTemplate(cvwnd, tmpl, cv2.TM_CCORR_NORMED, data, mask)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    return max_val
 
 
 class Controller():
@@ -210,6 +222,13 @@ class Controller():
         res = i
         break
     return res
+  
+  def maxtrigger(self,triggers):
+    corr = numpy.zeros(len(triggers))
+    self.screen.getframe()
+    for i, trigger in enumerate(triggers):
+      corr[i] = self.screen.corrtmpl(trigger[0],trigger[1],trigger[2])
+    return numpy.max(corr), numpy.argmax(corr)
   
   def waitadvance(self,dt=0.05):
     # increments of 50ms

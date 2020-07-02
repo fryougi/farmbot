@@ -231,8 +231,18 @@ class Farmbot(Controller):
     self.trigger_fpenhancece = (self.window_fpenhancece, self.tmpl_fpenhancece, None, self.tol_fpenhancece)
     self.trigger_fpenhanceokay = (self.window_fpenhanceokay, self.tmpl_fpenhanceokay, None, self.tol_fpenhanceokay)
   
-    #OCR Windows
+    # OCR Windows/Templates
     self.ocrwindow_wavetext = (854, 8, 924, 40)
+    self.ocrtol_wavetext = 0.9900
+    self.ocrtmpl_wave1 = cv2.imread(self.path+'templates/blue/ocr/1of3.png')
+    self.ocrtmpl_wave1mask = cv2.imread(self.path+'templates/blue/ocr/1of3mask.png')
+    self.ocrtmpl_wave2 = cv2.imread(self.path+'templates/blue/ocr/2of3.png')
+    self.ocrtmpl_wave2mask = cv2.imread(self.path+'templates/blue/ocr/2of3mask.png')
+    self.ocrtmpl_wave3 = cv2.imread(self.path+'templates/blue/ocr/3of3.png')
+    self.ocrtmpl_wave3mask = cv2.imread(self.path+'templates/blue/ocr/3of3mask.png')
+    self.ocrtrigger_wave1 = (self.ocrwindow_wavetext, self.ocrtmpl_wave1, self.ocrtmpl_wave1mask, self.ocrtol_wavetext)
+    self.ocrtrigger_wave2 = (self.ocrwindow_wavetext, self.ocrtmpl_wave2, self.ocrtmpl_wave2mask, self.ocrtol_wavetext)
+    self.ocrtrigger_wave3 = (self.ocrwindow_wavetext, self.ocrtmpl_wave3, self.ocrtmpl_wave3mask, self.ocrtol_wavetext)
   
   def farm(self,nruns=0):
     print("'farm' is not defined for farmbot base class, this method should be node-specific")
@@ -518,7 +528,7 @@ class Farmbot(Controller):
       #self.waitadvance(0.2)
     return res
   
-  def getwave(self):
+  def getwaveocr(self):
     wavetext = self.windowtextocr(self.ocrwindow_wavetext, invert=True)
     if wavetext is None:
       print("Warning: OCR not functioning")
@@ -534,10 +544,19 @@ class Farmbot(Controller):
         print("Warning: OCR not functioning")
         return 0
       
+  def getwavetmpl(self):
+    ocrtriggers = [self.ocrtrigger_wave1,self.ocrtrigger_wave2,self.ocrtrigger_wave3]
+    wavecorr, waveindex = self.maxtrigger(ocrtriggers)
+    if wavecorr > self.ocrtol_wavetext:
+      return waveindex + 1
+    else:
+      print("Warning: OCR not functioning")
+      return 0
+      
   def cardcleanup(self,wave,warn=False):
     res = self.clickuntiltrigger([self.trigger_attackbutton, self.trigger_nextbutton], self.xy_clickwave)
     if res == 0:
-      if wave == self.getwave():
+      if wave == self.getwavetmpl():
         if warn:          
           print("Warning: Card cleanup needed on wave {}".format(wave))
         res = self.attack()
