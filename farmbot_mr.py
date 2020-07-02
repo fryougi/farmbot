@@ -72,7 +72,10 @@ class Farmbot(Controller):
     res = self.waituntiltrigger([self.trigger_mr_selectsupport, self.trigger_mr_needsrefill])
     if res == 1:
       self.waitadvance(1.0)
-      self.cursor.click(self.xy_mr_greenpot)
+      if self.refilltype = 'red':
+        self.cursor.click(self.xy_mr_redpot)
+      else:
+        self.cursor.click(self.xy_mr_greenpot)
       self.waitadvance(1.5)
       self.cursor.click(self.xy_mr_refillokay)
       self.waitadvance(1.0)

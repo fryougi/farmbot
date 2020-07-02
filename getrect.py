@@ -7,7 +7,7 @@ import numpy
 import cv2
 
 # Load image
-cvimage = cv2.imread('screencaps/frame20.png')
+cvimage = cv2.imread('screencaps/frame0.png')
 tmpl = cv2.imread('templates/blue/repeatquest.png')
 #mask = cv2.imread('templates/blue/mcskillmask.png')
 

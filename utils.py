@@ -127,14 +127,14 @@ class Cursor():
     
     
 class Screen():
-  def __init__(self, window, outdir='frames'):
+  def __init__(self, window, outdir='screencaps'):
     self.outdir = outdir
     self.window = window
     self.frame = PIL.ImageGrab.grab(self.window)
     self.cvframe = numpy.array(self.frame)
     self.cvframe = self.cvframe[:,:,::-1].copy()
-    self.framecount = len([name for name in os.listdir(outdir) if os.path.isfile(os.path.join(outdir,name))])
-  
+    self.framecount = len([name for name in os.listdir(self.outdir) if os.path.isfile(os.path.join(self.outdir,name))])
+    
   def getframe(self):
     self.frame = PIL.ImageGrab.grab(self.window)
     self.cvframe = numpy.array(self.frame)
@@ -146,9 +146,9 @@ class Screen():
     cv2.destroyAllWindows()
     
   def saveframe(self):
-    self.framecount +=1
     self.getframe()
     cv2.imwrite(os.path.join(self.outdir,'frame%d.png'% self.framecount), self.cvframe)
+    self.framecount +=1
     
   def matchtmpl(self,window,tmpl,mask,tol):
     cvwnd = self.cvframe[window[1]:window[3],window[0]:window[2]]
@@ -167,7 +167,7 @@ class Controller():
     self.app = app
     self.path = path
     self.cursor = Cursor(self.app)
-    self.screen = Screen(self.cursor.window(), self.path+'frames')
+    self.screen = Screen(self.cursor.window(), self.path+'screencaps')
     # Press F6 to escape out of a run gone awry
     self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
     self.escaped = False

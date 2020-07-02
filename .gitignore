@@ -129,6 +129,5 @@ dmypy.json
 .pyre/
 
 # Saved frames
-frames/*.png
 screencaps/*.png
-!screencaps/frame20.png
+!screencaps/frame0.png
