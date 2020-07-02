@@ -2,9 +2,13 @@
 """
 Testing OCR (grab template locations/windows)
 
-Needed: pip install pytesseract
+Install pytesseract for python:
+  pip install pytesseract
 Install tesseract.exe on Windows
+  (https://tesseract-ocr.github.io/tessdoc/Home.html)
+  (https://github.com/tesseract-ocr/tesseract)
 Add C:\Programs\Tesseract-OCR to system path
+  My Computer -> System -> Advanced Settings -> Environment Variables
 """
 
 import cv2
