@@ -11,7 +11,6 @@ Waver (support)
 # and I want to run this file as a script
 import sys, os
 sys.path.append(os.path.abspath('../'))
-
 import farmbot as fb
 
 class Flame_Mountain(fb.Farmbot):

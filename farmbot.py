@@ -2,27 +2,13 @@
 """
 FGO Auto-farming (BlueStacks Version 2.0)
 """
-import win32api, win32con
-import time
 import cv2
-import winsound
-from utils import Cursor, Screen
+from utils import Controller
 
-class Farmbot():
+class Farmbot(Controller):
   def __init__(self, app='blue', path=''):
-    self.app = app
-    self.path = path
-    self.cursor = Cursor(self.app)
-    self.screen = Screen(self.cursor.window(), self.path+'frames')
-    # Press F6 to escape out of a run gone awry
-    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
-    self.escaped = False
-    # Easy looping for babysitting CE selection, etc.
-    self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-    self.quitloop = win32api.GetAsyncKeyState(win32con.VK_F4)
-    self.timeout = 90.0 # 1.5 minutes (nps don't last this long)
-    self.timer = 0.0
-    self.retries = 0
+    Controller.__init__(self,app,path)
+    
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # rapples and gapples
@@ -123,9 +109,6 @@ class Farmbot():
     # While button locations can be scaled, 
     # image templates are a lot more finicky
     
-    # Warning: not all functionality works with all
-    # apps because the templates are missing
-    
     # TODO: add CEs as needed (also update selsupport accordingly)
     # CEs need a template to read them and a tolerance (may be common)
 
@@ -192,44 +175,6 @@ class Farmbot():
       self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
       self.tmpl_servant_waver3 = cv2.imread(self.path+'templates/blue/servant/waver3.png')
       
-      # Additional locations and templates for Magia Record
-      # Locations change depending on what kind of node it is...
-      self.xy_mr_start = (595,325)
-      #self.xy_mr_advance = (315,175)
-      #self.xy_mr_node = (315,95)
-      self.xy_mr_advance = (275,165)
-      #self.xy_mr_node = (450,75) # laby
-      #self.xy_mr_node = (460,190) # story
-      self.xy_mr_node = (450, 150) # tower event
-      self.xy_mr_play = (535,270)
-      self.xy_mr_playagain = (585,333)
-      self.xy_mr_support = (335,130)
-      #self.xy_mr_support = (335,220)
-      self.xy_mr_greenpot = (145,300)
-      self.xy_mr_redpot = (320,300)
-      self.xy_mr_refillokay = (385,245)
-      self.window_mr_menubutton = (1184, 26, 1254, 51)
-      self.window_mr_selectsupport = (146, 612, 261, 652)
-      self.window_mr_playbutton = (1013, 522, 1133, 567)
-      self.window_mr_needsrefill = (242, 588, 342, 623)
-      self.window_mr_startbutton = (1156, 630, 1226, 675)
-      self.window_mr_battleclear = (593, 327, 693, 402)
-      self.window_mr_playagain = (1123, 652, 1223, 682)
-      self.tmpl_mr_menubutton = cv2.imread(self.path+'templates/blue_mr/menubutton.png')
-      self.tmpl_mr_selectsupport = cv2.imread(self.path+'templates/blue_mr/selectsupport.png')
-      self.tmpl_mr_playbutton = cv2.imread(self.path+'templates/blue_mr/playbutton.png')
-      self.tmpl_mr_needsrefill = cv2.imread(self.path+'templates/blue_mr/needsrefill.png')
-      self.tmpl_mr_startbutton = cv2.imread(self.path+'templates/blue_mr/startbutton.png')
-      self.tmpl_mr_battleclear = cv2.imread(self.path+'templates/blue_mr/battleclear.png')
-      self.tmpl_mr_playagain = cv2.imread(self.path+'templates/blue_mr/playagain.png')
-      self.trigger_mr_menubutton = (self.window_mr_menubutton, self.tmpl_mr_menubutton, None, 0.9990)
-      self.trigger_mr_selectsupport = (self.window_mr_selectsupport, self.tmpl_mr_selectsupport, None, 0.9990)
-      self.trigger_mr_playbutton = (self.window_mr_playbutton, self.tmpl_mr_playbutton, None, 0.9990)
-      self.trigger_mr_needsrefill = (self.window_mr_needsrefill, self.tmpl_mr_needsrefill, None, 0.9990)
-      self.trigger_mr_startbutton = (self.window_mr_startbutton, self.tmpl_mr_startbutton, None, 0.9990)
-      self.trigger_mr_battleclear = (self.window_mr_battleclear, self.tmpl_mr_battleclear, None, 0.9990)
-      self.trigger_mr_playagain = (self.window_mr_playagain, self.tmpl_mr_playagain, None, 0.9990)
-      
     else:
       # fail on other applications
       print("application {} not supported".format(self.app))
@@ -285,183 +230,9 @@ class Farmbot():
     self.trigger_fpsummonclose = (self.window_fpsummonclose, self.tmpl_fpsummonclose, None, self.tol_fpsummonclose)
     self.trigger_fpenhancece = (self.window_fpenhancece, self.tmpl_fpenhancece, None, self.tol_fpenhancece)
     self.trigger_fpenhanceokay = (self.window_fpenhanceokay, self.tmpl_fpenhanceokay, None, self.tol_fpenhanceokay)
-
-  def activate(self):
-    self.cursor.activate()
-    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
-    self.escaped = False
-    
-  def checkescape(self):
-    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
-    if self.escape == 1:
-      self.escaped = True
-      print ("Escaped out of sequence")
-    return self.escaped
   
-  # Get frames until trigger event (template matched)
-  def checktrigger(self,triggers):
-    res = -1
-    self.screen.getframe()
-    for i, trigger in enumerate(triggers):
-      if self.screen.matchtmpl(trigger[0],trigger[1],trigger[2],trigger[3]):
-        res = i
-        break
-    return res
-  
-  def waitadvance(self,dt=0.05):
-    # increments of 50ms
-    t = 0
-    while (t < dt):
-      if self.checkescape():
-        return -1
-      time.sleep(0.05)
-      t += 0.05
-    if self.checkescape():
-      return -1
-    return t
-  
-  def clickadvance(self,xy,dt=0.05):
-    # increments of 50ms
-    t = 0
-    while (t < dt):
-      if self.checkescape():
-        return -1
-      self.cursor.click(xy)
-      time.sleep(0.04)
-      t += 0.05
-    if self.checkescape():
-      return -1
-    return t
-  
-  def waituntiltrigger(self,triggers):
-    res = -1
-    self.timer = 0.0
-    self.retries = 1
-    while (res < 0):
-      t = self.waitadvance(0.05)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-      t = self.waitadvance(0.05)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-      self.timer += 0.1
-      if self.timer > self.timeout:
-        self.waitadvance(2)
-        res = self.checktrigger([self.trigger_retrybutton])
-        if res >= 0 and self.retries < 2:
-          self.cursor.moveclick(self.xy_connretry)
-          self.timer = 0 # Reset the timer upon retry
-          self.retries += 1
-          res = -1 # reset res to stay in while loop
-        else:
-          self.screen.saveframe()
-          print("Timeout occurred")
-          return -2
-    self.waitadvance()
-    return res
-  
-  
-  def waitslowuntiltrigger(self,triggers):
-    res = -1
-    while (res < 0):
-      t = self.waitadvance(0.35)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-      t = self.waitadvance(0.35)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-    self.waitadvance()
-    return res
-    
-  def clickuntiltrigger(self,triggers, xy):
-    self.cursor.moveto(xy)
-    self.waitadvance(0.1)
-    res = -1
-    self.timer = 0.0
-    self.retries = 1
-    while (res < 0):
-      t = self.waitadvance(0.05)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-      t = self.clickadvance(xy)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      t = self.waitadvance(0.05)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-      self.timer += 0.15
-      if self.timer > self.timeout:
-        self.waitadvance(2)
-        res = self.checktrigger([self.trigger_retrybutton])
-        if res >= 0 and self.retries < 2:
-          self.cursor.moveclick(self.xy_connretry)
-          self.timer = 0 # Reset the timer upon retry
-          self.retries += 1
-          res = -1 # reset res to stay in while loop
-        else:
-          self.screen.saveframe()
-          print("Timeout occurred")
-          return -2
-    self.waitadvance()
-    return res
-  
-  def clickslowuntiltrigger(self,triggers, xy):
-    self.cursor.moveto(xy)
-    self.waitadvance(0.1)
-    res = -1
-    while (res < 0):
-      t = self.waitadvance(0.35)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-      t = self.clickadvance(xy)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      t = self.waitadvance(0.35)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-      if res >= 0:
-        break
-    self.waitadvance()
-    return res
-  
-  def clickfastuntiltrigger(self,triggers, xy):
-    self.cursor.moveto(xy)
-    self.waitadvance(0.1)
-    res = -1
-    while (res < 0):
-      t = self.clickadvance(xy)
-      if t < 0:
-        return -1
-      t = self.waitadvance(0.1)
-      if t < 0:
-        return -1
-      res = self.checktrigger(triggers)
-    self.waitadvance()
-    return res
+  def farm(self,nruns=0):
+    print("'farm' is not defined for farmbot base class, this method should be node-specific")
   
   def refillsq(self):
     if self.refilltype == 'gapple':
@@ -483,7 +254,7 @@ class Farmbot():
     res = self.waituntiltrigger([self.trigger_menubutton])
     if res < 0:
       return res
-    time.sleep(1.5)
+    self.waitadvance(1.5)
     self.cursor.moveclick(self.xy_nodeselect)
     return res
   
@@ -492,7 +263,7 @@ class Farmbot():
     res = self.waituntiltrigger([self.trigger_menubutton])
     if res < 0:
       return res
-    time.sleep(1.5)
+    self.waitadvance(1.5)
     self.cursor.moveclick(self.xy_nodeselect)
     res = self.waituntiltrigger([self.trigger_selectsupport, self.trigger_apclosebutton])
     if res == 1:
@@ -506,7 +277,7 @@ class Farmbot():
     res = self.waituntiltrigger([self.trigger_repeatquest])
     if res < 0:
       return res
-    time.sleep(0.2)
+    self.waitadvance(0.2)
     self.cursor.moveclick(self.xy_norepeat)
     return res
   
@@ -515,7 +286,7 @@ class Farmbot():
     res = self.waituntiltrigger([self.trigger_repeatquest])
     if res < 0:
       return res
-    time.sleep(0.2)
+    self.waitadvance(0.2)
     self.cursor.moveclick(self.xy_repeat)
     res = self.waituntiltrigger([self.trigger_selectsupport, self.trigger_apclosebutton])
     if res == 1:
@@ -759,44 +530,6 @@ class Farmbot():
       #self.waitadvance(0.2)
     return res
   
-  def playalarm(self):
-    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
-    while True:
-      self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
-      if self.escape == 1:
-        print ("Exited alarm")
-        break
-      else: # Loop alarm
-        winsound.PlaySound('alarmsfx.wav',winsound.SND_FILENAME)
-        time.sleep(0.2)
-    return 0
-
-  def farm(self,nruns=0):
-    print("'farm' is not defined for farmbot base class, this method should be node-specific")
-
-  def farmloop(self, farm):
-    print("Farming: Press F5 to run node, press F6 to quit")
-    res = -1
-    self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-    while True:
-      if self.checkescape():
-        break
-      self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-      if self.runloop == 1:
-        res = self.startquest()
-        if res < 0:
-          break
-        res = farm()
-        if res < 0:
-          break
-        res = self.nodeselect()
-        if res < 0:
-          break;
-        self.runloop = win32api.GetAsyncKeyState(win32con.VK_F5)
-      else: # Wait until next time
-        time.sleep(1)
-    return res
-  
   # Lottery Inventory Management
   def rollbox(self, num=1):
     rolled = 0
@@ -833,7 +566,7 @@ class Farmbot():
         for xexp in self.xy_expxloc:
           xy_exp = (xexp,yexp)
           self.cursor.moveclick(xy_exp)
-          time.sleep(0.03)
+          self.waitadvance(0.03)
           selected += 1
           if selected >= num:
             return selected
@@ -851,13 +584,13 @@ class Farmbot():
         break
       selected = 0
       self.cursor.moveclick(self.xy_expfeed)
-      time.sleep(0.8)
+      self.waitadvance(0.8)
       while selected < 20:
         for yexp in self.xy_expyloc:
           for xexp in self.xy_expxloc:
             xy_exp = (xexp,yexp)
             self.cursor.moveclick(xy_exp)
-            time.sleep(0.02)
+            self.waitadvance(0.02)
             selected += 1
             if selected >= 20:
               break
@@ -866,23 +599,23 @@ class Farmbot():
       self.cursor.moveclick(self.xy_invokay)
       res = self.waituntiltrigger([self.trigger_fpenhancece])
       if res >= 0:
-        time.sleep(0.4)
+        self.waitadvance(0.4)
         self.cursor.moveclick(self.xy_invenhance)
-        time.sleep(0.2) #for good measure
+        self.waitadvance(0.2) #for good measure
         self.cursor.moveclick(self.xy_invenhance)
         res = self.waituntiltrigger([self.trigger_fpenhanceokay])
         if res >= 0:
-          time.sleep(0.2)
+          self.waitadvance(0.2)
           self.cursor.moveclick(self.xy_invconfirm)
-          time.sleep(1.5) # need to get past loading
+          self.waitadvance(1.5) # need to get past loading
           res = self.clickuntiltrigger([self.trigger_fpenhancece],self.xy_invconfirm)
           if res >= 0:
-            time.sleep(0.4)
+            self.waitadvance(0.4)
       numruns += 1
     return numruns
   
   def fpsummon(self):
-    # This is outdated
+    # This is outdated, needs new templates
     num10xs = 0
     res = self.waituntiltrigger([self.trigger_fp10xsummon])
     while res >= 0:

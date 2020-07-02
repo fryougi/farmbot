@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Utils (moving cursor around, screen captures)
+Cursors, Mouse Emulation, Screen Capture, Template Matching, etc.
 """
 import win32api, win32con, win32gui
 import os, os.path
 import time
+import winsound
 import numpy
 import PIL.ImageGrab
 import cv2
@@ -147,7 +148,7 @@ class Screen():
   def saveframe(self):
     self.framecount +=1
     self.getframe()
-    cv2.imwrite(os.path.join(outdir,'frame%d.png'% self.framecount), self.cvframe)
+    cv2.imwrite(os.path.join(self.outdir,'frame%d.png'% self.framecount), self.cvframe)
     
   def matchtmpl(self,window,tmpl,mask,tol):
     cvwnd = self.cvframe[window[1]:window[3],window[0]:window[2]]
@@ -160,6 +161,204 @@ class Screen():
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     return max_val > tol
 
-# Example initializers
-#cursor = Cursor()
-#screen = Screen(cursor.window())
+
+class Controller():
+  def __init__(self, app='blue', path=''):
+    self.app = app
+    self.path = path
+    self.cursor = Cursor(self.app)
+    self.screen = Screen(self.cursor.window(), self.path+'frames')
+    # Press F6 to escape out of a run gone awry
+    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
+    self.escaped = False
+    self.timeout = 90.0 # 1.5 minutes (nps don't last this long)
+    self.timer = 0.0
+    self.retries = 0
+
+  def activate(self):
+    self.cursor.activate()
+    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
+    self.escaped = False
+    
+  def checkescape(self):
+    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
+    if self.escape == 1:
+      self.escaped = True
+      print ("Escaped out of sequence")
+    return self.escaped
+  
+  # Get frames until trigger event (template matched)
+  def checktrigger(self,triggers):
+    res = -1
+    self.screen.getframe()
+    for i, trigger in enumerate(triggers):
+      if self.screen.matchtmpl(trigger[0],trigger[1],trigger[2],trigger[3]):
+        res = i
+        break
+    return res
+  
+  def waitadvance(self,dt=0.05):
+    # increments of 50ms
+    t = 0
+    while (t < dt):
+      if self.checkescape():
+        return -1
+      time.sleep(0.05)
+      t += 0.05
+    if self.checkescape():
+      return -1
+    return t
+  
+  def clickadvance(self,xy,dt=0.05):
+    # increments of 50ms
+    t = 0
+    while (t < dt):
+      if self.checkescape():
+        return -1
+      self.cursor.click(xy)
+      time.sleep(0.04)
+      t += 0.05
+    if self.checkescape():
+      return -1
+    return t
+  
+  def waituntiltrigger(self,triggers):
+    res = -1
+    self.timer = 0.0
+    self.retries = 1
+    while (res < 0):
+      t = self.waitadvance(0.05)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+      t = self.waitadvance(0.05)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+      self.timer += 0.1
+      if self.timer > self.timeout:
+        self.waitadvance(2)
+        res = self.checktrigger([self.trigger_retrybutton])
+        if res >= 0 and self.retries < 2:
+          self.cursor.moveclick(self.xy_connretry)
+          self.timer = 0 # Reset the timer upon retry
+          self.retries += 1
+          res = -1 # reset res to stay in while loop
+        else:
+          self.screen.saveframe()
+          print("Timeout occurred")
+          return -2
+    self.waitadvance()
+    return res
+  
+  def waitslowuntiltrigger(self,triggers):
+    res = -1
+    while (res < 0):
+      t = self.waitadvance(0.35)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+      t = self.waitadvance(0.35)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+    self.waitadvance()
+    return res
+    
+  def clickuntiltrigger(self,triggers, xy):
+    self.cursor.moveto(xy)
+    self.waitadvance(0.1)
+    res = -1
+    self.timer = 0.0
+    self.retries = 1
+    while (res < 0):
+      t = self.waitadvance(0.05)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+      t = self.clickadvance(xy)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      t = self.waitadvance(0.05)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+      self.timer += 0.15
+      if self.timer > self.timeout:
+        self.waitadvance(2)
+        res = self.checktrigger([self.trigger_retrybutton])
+        if res >= 0 and self.retries < 2:
+          self.cursor.moveclick(self.xy_connretry)
+          self.timer = 0 # Reset the timer upon retry
+          self.retries += 1
+          res = -1 # reset res to stay in while loop
+        else:
+          self.screen.saveframe()
+          print("Timeout occurred")
+          return -2
+    self.waitadvance()
+    return res
+  
+  def clickslowuntiltrigger(self,triggers, xy):
+    self.cursor.moveto(xy)
+    self.waitadvance(0.1)
+    res = -1
+    while (res < 0):
+      t = self.waitadvance(0.35)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+      t = self.clickadvance(xy)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      t = self.waitadvance(0.35)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+      if res >= 0:
+        break
+    self.waitadvance()
+    return res
+  
+  def clickfastuntiltrigger(self,triggers, xy):
+    self.cursor.moveto(xy)
+    self.waitadvance(0.1)
+    res = -1
+    while (res < 0):
+      t = self.clickadvance(xy)
+      if t < 0:
+        return -1
+      t = self.waitadvance(0.1)
+      if t < 0:
+        return -1
+      res = self.checktrigger(triggers)
+    self.waitadvance()
+    return res
+  
+  def playalarm(self):
+    self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
+    while True:
+      self.escape = win32api.GetAsyncKeyState(win32con.VK_F6)
+      if self.escape == 1:
+        print ("Exited alarm")
+        break
+      else: # Loop alarm
+        winsound.PlaySound('alarmsfx.wav',winsound.SND_FILENAME)
+        time.sleep(0.2)
+    return 0
