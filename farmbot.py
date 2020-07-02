@@ -259,6 +259,7 @@ class Farmbot(Controller):
     return res
   
   def nodeselectrefill(self):
+    # Not really used anymore due to repeat quest QoL
     self.waitadvance(0.1)
     res = self.waituntiltrigger([self.trigger_menubutton])
     if res < 0:
@@ -313,43 +314,24 @@ class Farmbot(Controller):
       self.cursor.moveclick(self.xy_support1)
       return 0
     else: # TODO make sure these match the templates
-      if self.app == 'nox':
-        if self.supportce == 'lunchtime':
-          trigger_tmpl1 = self.tmpl_ce_lunchtime1
-          trigger_tmpl2 = self.tmpl_ce_lunchtime2
-        elif self.supportce == 'monalisa':
-          trigger_tmpl1 = self.tmpl_ce_monalisa1
-          trigger_tmpl2 = self.tmpl_ce_monalisa2
-        elif self.supportce == 'nerocheer':
-          trigger_tmpl1 = self.tmpl_ce_nerocheer1
-          trigger_tmpl2 = self.tmpl_ce_nerocheer2
-        elif self.supportce == 'xmasmerry':
-          trigger_tmpl1 = self.tmpl_ce_xmasmerry1
-          trigger_tmpl2 = self.tmpl_ce_xmasmerry2
-        elif self.supportce == 'davincisoc':
-          trigger_tmpl1 = self.tmpl_ce_davincisoc1
-          trigger_tmpl2 = self.tmpl_ce_davincisoc2
-        else:
-          trigger_tmpl1 = trigger_tmpl2 = None
-      elif self.app == 'blue':
-        if self.supportce == 'lunchtime':
-          trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lunchtime
-        elif self.supportce == 'monalisa':
-          trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_monalisa
-        elif self.supportce == 'lesson':
-          trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lesson
-        elif self.supportce == 'training':
-          trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_training
-        elif self.supportce == 'davincisoc':
-          trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_davincisoc
-        else:
-          trigger_tmpl1 = trigger_tmpl2 = None
-        if self.supportservant == 'waver':
-          trigger_tmpl3 = self.tmpl_servant_waver1
-          trigger_tmpl4 = self.tmpl_servant_waver2
-          trigger_tmpl5 = self.tmpl_servant_waver3
-        else:
-          trigger_tmpl3 = trigger_tmpl4 = trigger_tmpl5 = None
+      if self.supportce == 'lunchtime':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lunchtime
+      elif self.supportce == 'monalisa':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_monalisa
+      elif self.supportce == 'lesson':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lesson
+      elif self.supportce == 'training':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_training
+      elif self.supportce == 'davincisoc':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_davincisoc
+      else:
+        trigger_tmpl1 = trigger_tmpl2 = None
+      if self.supportservant == 'waver':
+        trigger_tmpl3 = self.tmpl_servant_waver1
+        trigger_tmpl4 = self.tmpl_servant_waver2
+        trigger_tmpl5 = self.tmpl_servant_waver3
+      else:
+        trigger_tmpl3 = trigger_tmpl4 = trigger_tmpl5 = None
     # Generate CE templates
     if trigger_tmpl1 is None:
       trigger1 = trigger2 = None
