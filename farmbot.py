@@ -231,6 +231,9 @@ class Farmbot(Controller):
     self.trigger_fpenhancece = (self.window_fpenhancece, self.tmpl_fpenhancece, None, self.tol_fpenhancece)
     self.trigger_fpenhanceokay = (self.window_fpenhanceokay, self.tmpl_fpenhanceokay, None, self.tol_fpenhanceokay)
   
+    #OCR Windows
+    self.ocrwindow_wavetext = (854, 8, 924, 40)
+  
   def farm(self,nruns=0):
     print("'farm' is not defined for farmbot base class, this method should be node-specific")
   
@@ -510,6 +513,36 @@ class Farmbot(Controller):
       #self.waitadvance(0.2)
       #self.cursor.click(self.xy_next) # just to make sure
       #self.waitadvance(0.2)
+    return res
+  
+  def getwave(self):
+    wavetext = windowtextocr(self.ocrwindow_wavetext, invert=True)
+    if wavetext is None:
+      return 0
+    else:
+      if wavetext[0] == '1':
+        return 1
+      elif wavetext[0] == '2':
+        return 2
+      elif wavetext[0] == '3':
+        return 3
+      else:
+        return 0
+      
+  def cardcleanup(self,wave):
+    res = self.clickuntiltrigger([self.trigger_attackbutton, self.trigger_nextbutton], self.xy_clickwave)
+    if res == 0:
+      if wave == getwave():
+        res = self.attack()
+        if res < 0:
+          return -1
+        self.usecard(self.xy_card1)
+        self.usecard(self.xy_card2)
+        self.usecard(self.xy_card3)
+        # Loop until done
+        res = self.cardcleanup(wave)
+        if res < 0:
+          return -1
     return res
   
   # Lottery Inventory Management

@@ -10,6 +10,13 @@ import numpy
 import PIL.ImageGrab
 import cv2
 
+# Tesseract OCR
+import sys, shutil
+try:
+  import pytesseract
+except:
+  pass
+
 class Cursor():
   def __init__(self, app='blue'):
     self.app = app
@@ -174,6 +181,13 @@ class Controller():
     self.timeout = 90.0 # 1.5 minutes (nps don't last this long)
     self.timer = 0.0
     self.retries = 0
+    
+    # Tesseract OCR (tests to see if it's usable)
+    self.ocr = True
+    if shutil.which('tesseract') is None:
+      self.ocr = False
+    if 'pytesseract' not in sys.modules:
+      self.ocr = False
 
   def activate(self):
     self.cursor.activate()
@@ -362,3 +376,14 @@ class Controller():
         winsound.PlaySound('alarmsfx.wav',winsound.SND_FILENAME)
         time.sleep(0.2)
     return 0
+  
+  def windowtextocr(self,window,invert=False):
+    if self.ocr:
+      cvwnd = self.screen.cvframe[window[1]:window[3],window[0]:window[2]]
+      cvwnd = cv2.cvtColor(cvwnd, cv2.COLOR_BGR2GRAY)
+      if invert:
+        cvwnd = cv2.threshold(255-cvwnd, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+      wave = pytesseract.image_to_string(cvwnd, config=r'-l eng --oem 3 --psm 7')
+      return wave
+    else:
+      return None
