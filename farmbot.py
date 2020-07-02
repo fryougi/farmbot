@@ -278,11 +278,14 @@ class Farmbot(Controller):
   
   def norepeatquest(self):
     self.waitadvance(0.1)
-    res = self.waituntiltrigger([self.trigger_repeatquest])
+    res = self.waituntiltrigger([self.trigger_repeatquest, self.trigger_sendrequest])
     if res < 0:
       return res
     self.waitadvance(0.2)
-    self.cursor.moveclick(self.xy_norepeat)
+    if res == 0:
+      self.cursor.moveclick(self.xy_norepeat)
+    elif res == 1:
+      self.cursor.moveclick(self.xy_norequest)
     return res
   
   def repeatquestrefill(self):

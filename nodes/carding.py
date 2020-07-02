@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Farmer template
+Simple Carding
 """
 # Adding to the system path is needed
 # because no longer in parent directory
@@ -78,12 +78,14 @@ class Farmer(fb.Farmbot):
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
     self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'waver' # [waver,skadi]
+    self.supportservant = 'none' # [waver,skadi]
     self.saveframe = False
     
     while True:
       # Start quest (set it up for the farmer)
-      # Repeat quest no longer uses the party screen
+      res = self.startquest()
+      if res < 0:
+        return -1
       # Battle procedure Wave1
       res = self.wave1()
       if res < 0:
