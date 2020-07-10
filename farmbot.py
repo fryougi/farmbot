@@ -135,6 +135,7 @@ class Farmbot(Controller):
       self.window_repeatquest = (749, 545, 929, 590)
       self.window_sendrequest = (829, 593, 1079, 638)
       self.window_fp10xsummon = (736, 526, 916, 586)
+      self.window_fp10xrepeat = (659, 654, 869, 694)
       self.window_fpsummonokay = (789, 542, 889, 587)
       self.window_fpsummoncont = (684, 649, 844, 699)
       self.window_fpsummonclose = (565, 542, 715, 587)
@@ -159,6 +160,7 @@ class Farmbot(Controller):
       self.tmpl_repeatquest = cv2.imread(self.path+'templates/blue/repeatquest.png')
       self.tmpl_sendrequest = cv2.imread(self.path+'templates/blue/sendrequest.png')
       self.tmpl_fp10xsummon = cv2.imread(self.path+'templates/blue/fp10xsummon.png')
+      self.tmpl_fp10xrepeat = cv2.imread(self.path+'templates/blue/fp10xrepeat.png')
       self.tmpl_fpsummonokay = cv2.imread(self.path+'templates/blue/fpsummonokay.png')
       self.tmpl_fpsummonclose = cv2.imread(self.path+'templates/blue/fpsummonclose.png')
       self.tmpl_fpsummoncont = cv2.imread(self.path+'templates/blue/fpsummoncont.png')
@@ -198,6 +200,7 @@ class Farmbot(Controller):
     self.tol_repeatquest = 0.9990
     self.tol_sendrequest = 0.9990
     self.tol_fp10xsummon = 0.9990
+    self.tol_fp10xrepeat = 0.9990
     self.tol_fpsummonokay = 0.9990
     self.tol_fpsummonclose = 0.9990
     self.tol_fpsummoncont = 0.9990
@@ -225,6 +228,7 @@ class Farmbot(Controller):
     self.trigger_repeatquest = (self.window_repeatquest, self.tmpl_repeatquest, None, self.tol_repeatquest)
     self.trigger_sendrequest = (self.window_sendrequest, self.tmpl_sendrequest, None, self.tol_sendrequest)
     self.trigger_fp10xsummon = (self.window_fp10xsummon, self.tmpl_fp10xsummon, None, self.tol_fp10xsummon)
+    self.trigger_fp10xrepeat = (self.window_fp10xrepeat, self.tmpl_fp10xrepeat, None, self.tol_fp10xrepeat)
     self.trigger_fpsummonokay = (self.window_fpsummonokay, self.tmpl_fpsummonokay, None, self.tol_fpsummonokay)
     self.trigger_fpsummoncont = (self.window_fpsummoncont, self.tmpl_fpsummoncont, None, self.tol_fpsummoncont)
     self.trigger_fpsummonclose = (self.window_fpsummonclose, self.tmpl_fpsummonclose, None, self.tol_fpsummonclose)
@@ -656,20 +660,34 @@ class Farmbot(Controller):
     return numruns
   
   def fpsummon(self):
-    # This is outdated, needs new templates
+    # Commented out lines are from previous version of code
+    # Different control logic was used
     num10xs = 0
     res = self.waituntiltrigger([self.trigger_fp10xsummon])
-    while res >= 0:
+    # Start
+    if res >= 0:
       self.cursor.moveclick(self.xy_fpokay)
+    # Loop
+    while res >= 0:
+      #self.cursor.moveclick(self.xy_fpokay)
       # check for full inventory
       res = self.waituntiltrigger([self.trigger_fpsummonokay, self.trigger_fpsummonclose])
       if res == 0:
         self.cursor.click(self.xy_fpokay)
+        # explicitly click initially to let the 10xrepeat button fade
+        self.waitadvance(0.4)
+        self.cursor.moveclick(self.xy_fpempty)
+        self.waitadvance(0.4)
+        self.cursor.click(self.xy_fpempty)
+        self.waitadvance(0.4)
+        self.cursor.click(self.xy_fpempty)
         num10xs += 1
-        res = self.clickuntiltrigger([self.trigger_fpsummoncont], self.xy_fpempty)
+        #res = self.clickuntiltrigger([self.trigger_fpsummoncont], self.xy_fpempty)
+        res = self.clickuntiltrigger([self.trigger_fp10xrepeat], self.xy_fpempty)
         if res >= 0:
+          # This goes immediately into a new summon
           self.cursor.moveclick(self.xy_fpsummon)
-          res = self.waituntiltrigger([self.trigger_fp10xsummon])
+          #res = self.waituntiltrigger([self.trigger_fp10xsummon])
       elif res == 1:
         return num10xs
     return res
