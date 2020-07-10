@@ -176,6 +176,9 @@ class Farmbot(Controller):
       self.tmpl_servant_waver1 = cv2.imread(self.path+'templates/blue/servant/waver1.png')
       self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
       self.tmpl_servant_waver3 = cv2.imread(self.path+'templates/blue/servant/waver3.png')
+      self.tmpl_servant_skadi1 = cv2.imread(self.path+'templates/blue/servant/skadi1.png')
+      self.tmpl_servant_skadi2 = cv2.imread(self.path+'templates/blue/servant/skadi2.png')
+      self.tmpl_servant_skadi3 = cv2.imread(self.path+'templates/blue/servant/skadi3.png')
       
     else:
       # fail on other applications
@@ -350,6 +353,10 @@ class Farmbot(Controller):
         trigger_tmpl3 = self.tmpl_servant_waver1
         trigger_tmpl4 = self.tmpl_servant_waver2
         trigger_tmpl5 = self.tmpl_servant_waver3
+      elif self.supportservant == 'skadi':
+        trigger_tmpl3 = self.tmpl_servant_skadi1
+        trigger_tmpl4 = self.tmpl_servant_skadi2
+        trigger_tmpl5 = self.tmpl_servant_skadi3
       else:
         trigger_tmpl3 = trigger_tmpl4 = trigger_tmpl5 = None
     # Generate CE templates
