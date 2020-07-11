@@ -104,6 +104,17 @@ class Cursor():
     time.sleep(0.05)
     self.click(xy)
     
+  def clickselect(self,xy_start,xy_stop):
+    # click down, hold, move, release
+    self.moveto(xy_start)
+    x, y = self.rel2abs(xy_start)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+    time.sleep(0.75)
+    self.moveto(xy_stop)
+    time.sleep(0.25)
+    x, y = self.rel2abs(xy_stop)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+    
   # Meant to be used for present box, but now filters are a thing
   # The code here only really worked on Nox anyway, there's acceleration
   # during click/drag which makes the whole process very finicky

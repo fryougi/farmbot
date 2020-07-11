@@ -139,7 +139,10 @@ class Farmbot(Controller):
       self.window_fpsummonokay = (789, 542, 889, 587)
       self.window_fpsummoncont = (684, 649, 844, 699)
       self.window_fpsummonclose = (565, 542, 715, 587)
-      self.window_fpenhancece = (941, 9, 1271, 59)
+      self.window_fpenhancece = (982, 26, 1230, 58)
+      self.window_fpenhancenone = (389, 259, 489, 309)
+      self.window_fpenhanceselect = (7, 218, 57, 268)
+      self.window_fpenhancelock = (69, 220, 84, 270)
       self.window_fpenhanceokay = (786, 565, 896, 615)
       # List of template images
       self.tmpl_menubutton = cv2.imread(self.path+'templates/blue/menubutton.png')
@@ -165,6 +168,9 @@ class Farmbot(Controller):
       self.tmpl_fpsummonclose = cv2.imread(self.path+'templates/blue/fpsummonclose.png')
       self.tmpl_fpsummoncont = cv2.imread(self.path+'templates/blue/fpsummoncont.png')
       self.tmpl_fpenhancece = cv2.imread(self.path+'templates/blue/fpenhancece.png')
+      self.tmpl_fpenhancenone = cv2.imread(self.path+'templates/blue/fpenhancenone.png')
+      self.tmpl_fpenhanceselect = cv2.imread(self.path+'templates/blue/fpenhanceselect.png')
+      self.tmpl_fpenhancelock = cv2.imread(self.path+'templates/blue/fpenhancelock.png')
       self.tmpl_fpenhanceokay = cv2.imread(self.path+'templates/blue/fpenhanceokay.png')
       # CEs get their own section (scaling is better in bluestacks, only one is needed)
       self.tmpl_ce_lunchtime = cv2.imread(self.path+'templates/blue/ce/lunchtime.png')
@@ -208,6 +214,9 @@ class Farmbot(Controller):
     self.tol_fpsummonclose = 0.9990
     self.tol_fpsummoncont = 0.9990
     self.tol_fpenhancece = 0.9990
+    self.tol_fpenhancenone = 0.9990
+    self.tol_fpenhanceselect = 0.9990
+    self.tol_fpenhancelock = 0.9990
     self.tol_fpenhanceokay = 0.9990
     self.tol_ceselect = 0.9990
     self.tol_servantselect = 0.9990
@@ -236,6 +245,9 @@ class Farmbot(Controller):
     self.trigger_fpsummoncont = (self.window_fpsummoncont, self.tmpl_fpsummoncont, None, self.tol_fpsummoncont)
     self.trigger_fpsummonclose = (self.window_fpsummonclose, self.tmpl_fpsummonclose, None, self.tol_fpsummonclose)
     self.trigger_fpenhancece = (self.window_fpenhancece, self.tmpl_fpenhancece, None, self.tol_fpenhancece)
+    self.trigger_fpenhancenone = (self.window_fpenhancenone, self.tmpl_fpenhancenone, None, self.tol_fpenhancenone)
+    self.trigger_fpenhanceselect = (self.window_fpenhanceselect, self.tmpl_fpenhanceselect, None, self.tol_fpenhanceselect)
+    self.trigger_fpenhancelock = (self.window_fpenhancelock, self.tmpl_fpenhancelock, None, self.tol_fpenhancelock)
     self.trigger_fpenhanceokay = (self.window_fpenhanceokay, self.tmpl_fpenhanceokay, None, self.tol_fpenhanceokay)
   
     # OCR Windows/Templates
@@ -452,7 +464,7 @@ class Farmbot(Controller):
     res = self.waituntiltrigger([self.trigger_mcskill])
     if res >= 0:
       self.cursor.moveclick(xy_skill)
-      self.waitadvance(0.6) # get the skill started
+      self.waitadvance(0.4) # get the skill started
     return res
   
   def usemcskill(self, xy_skill):
@@ -467,7 +479,6 @@ class Farmbot(Controller):
   def seltarget(self, xy_target):
     res = self.waituntiltrigger([self.trigger_mcskill])
     if res >= 0:
-      self.waitadvance(0.2)
       self.cursor.moveclick(xy_target)
       self.waitadvance(0.2) # get the skill started
     return res
@@ -628,41 +639,60 @@ class Farmbot(Controller):
     return selected
   
   # Friend point summoning CE bombs
-  def enhancece(self, num=7):
+  def enhancece(self, num=0):
     numruns = 0
-    while numruns < num:
+    while (numruns < num) or (num == 0):
       if self.checkescape():
-        numruns = -1
         break
       selected = 0
       self.cursor.moveclick(self.xy_expfeed)
-      self.waitadvance(0.8)
-      while selected < 20:
-        for yexp in self.xy_expyloc:
-          for xexp in self.xy_expxloc:
-            xy_exp = (xexp,yexp)
-            self.cursor.moveclick(xy_exp)
-            self.waitadvance(0.02)
-            selected += 1
-            if selected >= 20:
-              break
-          if selected >= 20:
-            break
+      # Get to the select screen
+      res = self.waituntiltrigger([self.trigger_fpenhancelock,self.trigger_fpenhancenone,self.trigger_fpenhanceselect])
+      # If the first CE is locked (e.g. by acquisition), finish
+      if res < 2:
+        break
+      # This selects CEs individually based on the older version...
+      #while selected < 20:
+      #  for yexp in self.xy_expyloc:
+      #    for xexp in self.xy_expxloc:
+      #      xy_exp = (xexp,yexp)
+      #      self.cursor.moveclick(xy_exp)
+      #      self.waitadvance(0.02)
+      #      selected += 1
+      #      if selected >= 20:
+      #        break
+      #    if selected >= 20:
+      #      break
+      # This selects CEs using a click hold move release action
+      xy_start = (self.xy_expxloc[0],self.xy_expyloc[0])
+      xy_stop = (self.xy_expxloc[5],self.xy_expyloc[2])
+      self.cursor.clickselect(xy_start,xy_stop)
+      self.waitadvance(0.4)
       self.cursor.moveclick(self.xy_invokay)
+      self.waitadvance(0.4)
       res = self.waituntiltrigger([self.trigger_fpenhancece])
       if res >= 0:
-        self.waitadvance(0.4)
         self.cursor.moveclick(self.xy_invenhance)
         self.waitadvance(0.2) #for good measure
         self.cursor.moveclick(self.xy_invenhance)
         res = self.waituntiltrigger([self.trigger_fpenhanceokay])
         if res >= 0:
-          self.waitadvance(0.2)
           self.cursor.moveclick(self.xy_invconfirm)
-          self.waitadvance(1.5) # need to get past loading
+          self.waitadvance(0.4)
+          self.cursor.click(self.xy_invconfirm)
+          self.waitadvance(0.4)
+          self.cursor.click(self.xy_invconfirm)
+          self.waitadvance(0.4)
+          self.cursor.click(self.xy_invconfirm)
           res = self.clickuntiltrigger([self.trigger_fpenhancece],self.xy_invconfirm)
           if res >= 0:
             self.waitadvance(0.4)
+          else:
+            break
+        else:
+          break
+      else:
+        break
       numruns += 1
     return numruns
   
