@@ -108,10 +108,11 @@ class Cursor():
     # click down, hold, move, release
     self.moveto(xy_start)
     x, y = self.rel2abs(xy_start)
+    time.sleep(0.2)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
-    time.sleep(0.75)
+    time.sleep(1.0)
     self.moveto(xy_stop)
-    time.sleep(0.25)
+    time.sleep(0.2)
     x, y = self.rel2abs(xy_stop)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
     

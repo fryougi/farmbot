@@ -142,7 +142,7 @@ class Farmbot(Controller):
       self.window_fpenhancece = (982, 26, 1230, 58)
       self.window_fpenhancenone = (389, 259, 489, 309)
       self.window_fpenhanceselect = (7, 218, 57, 268)
-      self.window_fpenhancelock = (69, 220, 84, 270)
+      self.window_fpenhancelock = (71, 241, 91, 257)
       self.window_fpenhanceokay = (786, 565, 896, 615)
       # List of template images
       self.tmpl_menubutton = cv2.imread(self.path+'templates/blue/menubutton.png')
