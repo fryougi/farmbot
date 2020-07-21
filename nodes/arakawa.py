@@ -34,7 +34,7 @@ class Shimosa_Arakawa(fb.Farmbot):
     # Card selection (pick 3)
     self.usecard(self.xy_npa)
     self.usecard(self.xy_card3)
-    self.usecard(self.xy_npb)
+    self.usecard(self.xy_npc)
     return 0
   
   def wave2(self):
@@ -87,7 +87,7 @@ class Shimosa_Arakawa(fb.Farmbot):
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
     self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'waver' # [waver,skadi]
+    self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     
     while True:

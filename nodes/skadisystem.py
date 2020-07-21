@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-DSS (arctic)
+DSS (2k4)
 
 Dondo
 YourOwnSkader
@@ -52,12 +52,21 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
+    #res = self.useskill(self.xy_skillb2)
+    #if res < 0:
+    #  return -1
     res = self.useskill(self.xy_skillb3)
     if res < 0:
       return -1
     res = self.seltarget(self.xy_targeta)
     if res < 0:
       return -1
+    #res = self.usemcskill(self.xy_mcskill3)
+    #if res < 0:
+    #  return -1
+    #res = self.seltarget(self.xy_targeta)
+    #if res < 0:
+    #  return -1
     # Attack
     res = self.attack()
     if res < 0:
@@ -88,7 +97,7 @@ class Farmer_DSS(fb.Farmbot):
     res = self.seltarget(self.xy_targeta)
     if res < 0:
       return -1
-    res = self.usemcskill(self.xy_mcskill2)
+    res = self.usemcskill(self.xy_mcskill1)
     if res < 0:
       return -1
     res = self.seltarget(self.xy_targeta)
@@ -112,7 +121,7 @@ class Farmer_DSS(fb.Farmbot):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportce = 'training' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     

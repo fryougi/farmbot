@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Salem (Stakes)
+Lancer Daily
 
-Para
+Sigurd
+AOE Saber
 Nito
-Circe
 """
 # Adding to the system path is needed
 # because no longer in parent directory
@@ -13,7 +13,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class Salem_Stake(fb.Farmbot):
+class Daily_Lancer(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../')
     
@@ -22,17 +22,14 @@ class Salem_Stake(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skillc1)
-    if res < 0:
-      return -1
     # Attack
     res = self.attack()
     if res < 0:
       return -1
     # Card selection (pick 3)
-    self.usecard(self.xy_npa)
-    self.usecard(self.xy_card3)
     self.usecard(self.xy_npc)
+    self.usecard(self.xy_card3)
+    self.usecard(self.xy_npa)
     return 0
   
   def wave2(self):
@@ -40,7 +37,13 @@ class Salem_Stake(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skilla2)
+    res = self.useskill(self.xy_skillb1)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc2)
+    if res < 0:
+      return -1
+    res = self.usemcskill(self.xy_mcskill1)
     if res < 0:
       return -1
     # Attack
@@ -58,13 +61,7 @@ class Salem_Stake(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skillb2)
-    if res < 0:
-      return -1
-    res = self.usemcskill(self.xy_mcskill2)
-    if res < 0:
-      return -1
-    res = self.seltarget(self.xy_targetb)
+    res = self.useskill(self.xy_skilla2)
     if res < 0:
       return -1
     # Attack
@@ -72,13 +69,9 @@ class Salem_Stake(fb.Farmbot):
     if res < 0:
       return -1
     # Card selection (pick 3)
-    self.usecard(self.xy_npb)
     self.usecard(self.xy_npc)
-    self.usecard(self.xy_card4)
-    # Potential cleanup
-    res = self.cardcleanup(3)
-    if res < 0:
-      return -1
+    self.usecard(self.xy_npa)
+    self.usecard(self.xy_card2)
     return 0
     
   def farm(self,nruns=1):
@@ -130,5 +123,5 @@ class Salem_Stake(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = Salem_Stake()
+  farmer = Daily_Lancer()
   farmer.activate()

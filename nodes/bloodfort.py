@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Salem (Stakes)
+Blood Fort (Lanugo)
 
-Para
-Nito
-Circe
+Liz
+Shuten
+Scath
 """
 # Adding to the system path is needed
 # because no longer in parent directory
@@ -13,7 +13,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class Salem_Stake(fb.Farmbot):
+class Farmer_DSS(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../')
     
@@ -22,7 +22,7 @@ class Salem_Stake(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skillc1)
+    res = self.useskill(self.xy_skilla1)
     if res < 0:
       return -1
     # Attack
@@ -31,7 +31,7 @@ class Salem_Stake(fb.Farmbot):
       return -1
     # Card selection (pick 3)
     self.usecard(self.xy_npa)
-    self.usecard(self.xy_card3)
+    self.usecard(self.xy_card2)
     self.usecard(self.xy_npc)
     return 0
   
@@ -40,31 +40,25 @@ class Salem_Stake(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
+    res = self.selenemy(self.xy_enemyb)
+    if res < 0:
+      return -1
     res = self.useskill(self.xy_skilla2)
     if res < 0:
       return -1
-    # Attack
-    res = self.attack()
+    res = self.useskill(self.xy_skillb1)
     if res < 0:
       return -1
-    # Card selection (pick 3)
-    self.usecard(self.xy_npb)
-    self.usecard(self.xy_card3)
-    self.usecard(self.xy_npc)
-    return 0
-  
-  def wave3(self):
-    res = self.advancewave()
-    if res < 0:
-      return -1
-    # Skills selection (may be empty)
     res = self.useskill(self.xy_skillb2)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc3)
     if res < 0:
       return -1
     res = self.usemcskill(self.xy_mcskill2)
     if res < 0:
       return -1
-    res = self.seltarget(self.xy_targetb)
+    res = self.seltarget(self.xy_targetc)
     if res < 0:
       return -1
     # Attack
@@ -76,7 +70,7 @@ class Salem_Stake(fb.Farmbot):
     self.usecard(self.xy_npc)
     self.usecard(self.xy_card4)
     # Potential cleanup
-    res = self.cardcleanup(3)
+    res = self.cardcleanup(2)
     if res < 0:
       return -1
     return 0
@@ -85,8 +79,8 @@ class Salem_Stake(fb.Farmbot):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'training' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'none' # [waver,skadi]
+    self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     
     while True:
@@ -98,10 +92,6 @@ class Salem_Stake(fb.Farmbot):
         return -1
       # Battle prodedure Wave2
       res = self.wave2()
-      if res < 0:
-        return -1
-      # Battle prodedure Wave3
-      res = self.wave3()
       if res < 0:
         return -1
       # Finished run
@@ -130,5 +120,5 @@ class Salem_Stake(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = Salem_Stake()
+  farmer = Farmer_DSS()
   farmer.activate()
