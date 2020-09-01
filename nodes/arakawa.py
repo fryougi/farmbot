@@ -86,8 +86,8 @@ class Shimosa_Arakawa(fb.Farmbot):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'skadi' # [waver,skadi]
+    self.supportce = 'training' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportservant = 'none' # [waver,skadi]
     self.saveframe = False
     
     while True:

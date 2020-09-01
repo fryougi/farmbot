@@ -6,9 +6,10 @@ import cv2
 from utils import Controller
 
 class Farmbot(Controller):
-  def __init__(self, app='blue', path=''):
+  def __init__(self, app='blue', path='', region='na'):
     Controller.__init__(self,app,path)
     
+    self.region = region
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # rapples and gapples
@@ -186,6 +187,29 @@ class Farmbot(Controller):
       self.tmpl_servant_skadi2 = cv2.imread(self.path+'templates/blue/servant/skadi2.png')
       self.tmpl_servant_skadi3 = cv2.imread(self.path+'templates/blue/servant/skadi3.png')
       
+      # Replace some templates with jp stuff
+      if self.region == 'jp':
+        self.window_selectsupport = (948, 11, 1268, 61)
+        self.tmpl_selectsupport = cv2.imread(self.path+'templates/blue/jpselectsupport.png')
+        self.window_confirmsetup = (1090, 213, 1178, 257)
+        self.tmpl_confirmsetup = cv2.imread(self.path+'templates/blue/jpconfirmsetup.png')
+        self.window_updateclose = (567, 538, 707, 588)
+        self.tmpl_updateclose = cv2.imread(self.path+'templates/blue/jpupdateclose.png')
+        self.window_startquest = (1120, 656, 1260, 696)
+        self.tmpl_startquest = cv2.imread(self.path+'templates/blue/jpstartquest.png')
+        # Window for MCSkill is the same, which lets me reuse the MCSkillMask from above
+        self.tmpl_mcskill = cv2.imread(self.path+'templates/blue/jpmcskill.png')
+        self.window_replacebutton = (553, 601, 733, 651)
+        self.tmpl_replacebutton = cv2.imread(self.path+'templates/blue/jpreplacebutton.png')
+        self.window_nextbutton = (1026, 654, 1186, 704)
+        self.tmpl_nextbutton = cv2.imread(self.path+'templates/blue/jpnextbutton.png')
+        self.window_apclosebutton = (589, 594, 689, 644)
+        self.tmpl_apclosebutton = cv2.imread(self.path+'templates/blue/jpapclosebutton.png')
+        self.window_apokbutton = (789, 538, 889, 588)
+        self.tmpl_apokbutton = cv2.imread(self.path+'templates/blue/jpapokbutton.png')
+        self.window_repeatquest = (759, 543, 929, 588)
+        self.tmpl_repeatquest = cv2.imread(self.path+'templates/blue/jprepeatquest.png')
+      
     else:
       # fail on other applications
       print("application {} not supported".format(self.app))
@@ -218,8 +242,8 @@ class Farmbot(Controller):
     self.tol_fpenhanceselect = 0.9990
     self.tol_fpenhancelock = 0.9990
     self.tol_fpenhanceokay = 0.9990
-    self.tol_ceselect = 0.9990
-    self.tol_servantselect = 0.9990
+    self.tol_ceselect = 0.9970
+    self.tol_servantselect = 0.9970
       
     # List of triggers for detecting template match
     # CE triggers are created on the fly in selsupport
