@@ -67,6 +67,7 @@ class Farmbot(Controller):
     self.xy_replace = (320,313)
     self.xy_clickwave = (520,140)
     self.xy_clickdrop = (400,300)
+    self.xy_clickcard = (25,140)
     self.xy_next = (550,340)
     # Refills
     self.xy_close = (318,310)
@@ -129,7 +130,8 @@ class Farmbot(Controller):
       self.window_support2ce = (51, 526, 209, 571)
       self.window_support1servant = (51, 276, 101, 326)
       self.window_support2servant = (51, 476, 101, 526)
-      self.window_lottoresetbox = (1058, 229, 1218, 259)
+      #self.window_lottoresetbox = (1058, 229, 1218, 259)
+      self.window_lottoresetbox = (1074, 231, 1204, 256)
       self.window_lottoresetclose = (571, 538, 711, 588)
       self.window_retrybutton = (773, 542, 903, 587)
       self.window_updateclose = (564, 537, 714, 587)
@@ -157,7 +159,8 @@ class Farmbot(Controller):
       self.tmpl_nextbutton = cv2.imread(self.path+'templates/blue/nextbutton.png')
       self.tmpl_apclosebutton = cv2.imread(self.path+'templates/blue/apclosebutton.png')
       self.tmpl_apokbutton = cv2.imread(self.path+'templates/blue/apokbutton.png')
-      self.tmpl_lottoresetbox = cv2.imread(self.path+'templates/blue/lottoresetbox.png')
+      #self.tmpl_lottoresetbox = cv2.imread(self.path+'templates/blue/lottoresetbox.png')
+      self.tmpl_lottoresetbox = cv2.imread(self.path+'templates/blue/lottoresetbox_2.png')
       self.tmpl_lottoresetclose = cv2.imread(self.path+'templates/blue/lottoresetclose.png')
       self.tmpl_retrybutton = cv2.imread(self.path+'templates/blue/retrybutton.png')
       self.tmpl_updateclose = cv2.imread(self.path+'templates/blue/updateclose.png')
@@ -178,7 +181,9 @@ class Farmbot(Controller):
       self.tmpl_ce_monalisa = cv2.imread(self.path+'templates/blue/ce/monalisa.png')
       self.tmpl_ce_lesson = cv2.imread(self.path+'templates/blue/ce/lesson.png')
       self.tmpl_ce_training = cv2.imread(self.path+'templates/blue/ce/training.png')
-      self.tmpl_ce_davincisoc = cv2.imread('templates/blue/ce/davincisoc.png')
+      self.tmpl_ce_davincisoc = cv2.imread(self.path+'templates/blue/ce/davincisoc.png')
+      self.tmpl_ce_gilckt = cv2.imread(self.path+'templates/blue/ce/gilckt.png')
+      self.tmpl_ce_gilcktmlb = cv2.imread(self.path+'templates/blue/ce/gilcktmlb.png')
       # Servants also get their own section (for frontlining specific servants)
       self.tmpl_servant_waver1 = cv2.imread(self.path+'templates/blue/servant/waver1.png')
       self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
@@ -209,6 +214,8 @@ class Farmbot(Controller):
         self.tmpl_apokbutton = cv2.imread(self.path+'templates/blue/jpapokbutton.png')
         self.window_repeatquest = (759, 543, 929, 588)
         self.tmpl_repeatquest = cv2.imread(self.path+'templates/blue/jprepeatquest.png')
+        self.window_retrybutton = (758, 538, 918, 588)
+        self.tmpl_retrybutton = cv2.imread(self.path+'templates/blue/jpretrybutton.png')
       
     else:
       # fail on other applications
@@ -383,6 +390,10 @@ class Farmbot(Controller):
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_training
       elif self.supportce == 'davincisoc':
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_davincisoc
+      elif self.supportce == 'gilckt':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_gilckt
+      elif self.supportce == 'gilcktmlb':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_gilcktmlb
       else:
         trigger_tmpl1 = trigger_tmpl2 = None
       if self.supportservant == 'waver':
@@ -600,7 +611,7 @@ class Farmbot(Controller):
       return 0
       
   def cardcleanup(self,wave,warn=False):
-    res = self.clickuntiltrigger([self.trigger_attackbutton, self.trigger_nextbutton], self.xy_clickwave)
+    res = self.clickuntiltrigger([self.trigger_attackbutton, self.trigger_nextbutton], self.xy_clickcard)
     if res == 0:
       if wave == self.getwavetmpl():
         if warn:          

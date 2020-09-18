@@ -9,7 +9,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class JP_Doors(fb.Farmbot):
+class JP_Hands(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../','jp')
     
@@ -18,13 +18,13 @@ class JP_Doors(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skillb1)
+    res = self.useskill(self.xy_skilla2)
     if res < 0:
       return -1
     res = self.useskill(self.xy_skillb2)
     if res < 0:
       return -1
-    res = self.seltarget(self.xy_targeta)
+    res = self.seltarget(self.xy_targetc)
     if res < 0:
       return -1
     res = self.useskill(self.xy_skillc3)
@@ -45,7 +45,10 @@ class JP_Doors(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skillc1)
+    res = self.useskill(self.xy_skillb1)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc3)
     if res < 0:
       return -1
     # Attack
@@ -53,8 +56,8 @@ class JP_Doors(fb.Farmbot):
     if res < 0:
       return -1
     # Card selection (pick 3)
-    self.usecard(self.xy_npa)
-    self.usecard(self.xy_card2)
+    self.usecard(self.xy_npc)
+    self.usecard(self.xy_card4)
     self.usecard(self.xy_card3)
     return 0
   
@@ -69,8 +72,8 @@ class JP_Doors(fb.Farmbot):
     if res < 0:
       return -1
     # Card selection (pick 3)
-    self.usecard(self.xy_npc)
-    self.usecard(self.xy_card4)
+    self.usecard(self.xy_npa)
+    self.usecard(self.xy_card2)
     self.usecard(self.xy_card3)
     return 0
     
@@ -123,5 +126,5 @@ class JP_Doors(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = JP_Doors()
+  farmer = JP_Hands()
   farmer.activate()

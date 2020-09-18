@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-DSS (2k4)
-
-Dondo
-YourOwnSkader
-SupportSkader
+Nito
+Skadi
+Seiba
 """
 # Adding to the system path is needed
 # because no longer in parent directory
@@ -13,7 +11,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class Farmer_DSS(fb.Farmbot):
+class Farmer_Gilfest(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../')
     
@@ -25,18 +23,6 @@ class Farmer_DSS(fb.Farmbot):
     res = self.useskill(self.xy_skilla2)
     if res < 0:
       return -1
-    res = self.useskill(self.xy_skillb1)
-    if res < 0:
-      return -1
-    res = self.seltarget(self.xy_targeta)
-    if res < 0:
-      return -1
-    res = self.useskill(self.xy_skillc1)
-    if res < 0:
-      return -1
-    res = self.seltarget(self.xy_targeta)
-    if res < 0:
-      return -1
     # Attack
     res = self.attack()
     if res < 0:
@@ -44,7 +30,7 @@ class Farmer_DSS(fb.Farmbot):
     # Card selection (pick 3)
     self.usecard(self.xy_npa)
     self.usecard(self.xy_card2)
-    self.usecard(self.xy_card3)
+    self.usecard(self.xy_npc)
     return 0
   
   def wave2(self):
@@ -52,29 +38,24 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    #res = self.useskill(self.xy_skillb2)
-    #if res < 0:
-    #  return -1
-    res = self.useskill(self.xy_skillb3)
+    res = self.useskill(self.xy_skillb2)
     if res < 0:
       return -1
-    res = self.seltarget(self.xy_targeta)
+    res = self.useskill(self.xy_skillc1)
     if res < 0:
       return -1
-    #res = self.usemcskill(self.xy_mcskill3)
-    #if res < 0:
-    #  return -1
-    #res = self.seltarget(self.xy_targeta)
-    #if res < 0:
-    #  return -1
     # Attack
     res = self.attack()
     if res < 0:
       return -1
     # Card selection (pick 3)
-    self.usecard(self.xy_npa)
-    self.usecard(self.xy_card2)
+    self.usecard(self.xy_npc)
+    self.usecard(self.xy_card4)
     self.usecard(self.xy_card3)
+    # Potential cleanup
+    res = self.cardcleanup(2)
+    if res < 0:
+      return -1
     return 0
   
   def wave3(self):
@@ -82,25 +63,22 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skilla1)
+    res = self.useskill(self.xy_skillb3)
     if res < 0:
       return -1
-    #res = self.useskill(self.xy_skillb2)
-    #if res < 0:
-    #  return -1
-    #res = self.useskill(self.xy_skillc2)
-    #if res < 0:
-    #  return -1
+    res = self.seltarget(self.xy_targetc)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc2)
+    if res < 0:
+      return -1
     res = self.useskill(self.xy_skillc3)
     if res < 0:
       return -1
-    res = self.seltarget(self.xy_targeta)
+    res = self.usemcskill(self.xy_mcskill2)
     if res < 0:
       return -1
-    res = self.usemcskill(self.xy_mcskill1)
-    if res < 0:
-      return -1
-    res = self.seltarget(self.xy_targeta)
+    res = self.seltarget(self.xy_targetc)
     if res < 0:
       return -1
     # Attack
@@ -108,8 +86,8 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Card selection (pick 3)
-    self.usecard(self.xy_npa)
-    self.usecard(self.xy_card2)
+    self.usecard(self.xy_npc)
+    self.usecard(self.xy_card4)
     self.usecard(self.xy_card3)
     # Potential cleanup
     res = self.cardcleanup(3)
@@ -121,7 +99,7 @@ class Farmer_DSS(fb.Farmbot):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'training' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportce = 'gilcktmlb' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     
@@ -166,5 +144,5 @@ class Farmer_DSS(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = Farmer_DSS()
+  farmer = Farmer_Gilfest()
   farmer.activate()
