@@ -7,8 +7,8 @@ import numpy
 import cv2
 
 # Load image
-cvimage = cv2.imread('screencaps/frame152.png')
-tmpl = cv2.imread('templates/blue/lottoresetbox_2.png')
+cvimage = cv2.imread('screencaps/frame10.png')
+tmpl = cv2.imread('templates/blue/lottoresetbox_4.png')
 #mask = cv2.imread('templates/blue/mcskillmask.png')
 
 # for nox
