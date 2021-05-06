@@ -52,9 +52,9 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    #res = self.useskill(self.xy_skillb2)
-    #if res < 0:
-    #  return -1
+    res = self.useskill(self.xy_skillb2)
+    if res < 0:
+      return -1
     res = self.useskill(self.xy_skillb3)
     if res < 0:
       return -1
@@ -88,9 +88,9 @@ class Farmer_DSS(fb.Farmbot):
     #res = self.useskill(self.xy_skillb2)
     #if res < 0:
     #  return -1
-    #res = self.useskill(self.xy_skillc2)
-    #if res < 0:
-    #  return -1
+    res = self.useskill(self.xy_skillc2)
+    if res < 0:
+      return -1
     res = self.useskill(self.xy_skillc3)
     if res < 0:
       return -1
@@ -120,8 +120,8 @@ class Farmer_DSS(fb.Farmbot):
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
-    self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'training' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.refilltype = 'gapple' # [rapple,gapple,sapple,bapple]
+    self.supportce = 'maidenmlb' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     

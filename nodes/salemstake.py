@@ -85,7 +85,7 @@ class Salem_Stake(fb.Farmbot):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'training' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportce = 'lunchtime' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'none' # [waver,skadi]
     self.saveframe = False
     

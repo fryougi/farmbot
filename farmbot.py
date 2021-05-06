@@ -185,6 +185,7 @@ class Farmbot(Controller):
       self.tmpl_ce_davincisoc = cv2.imread(self.path+'templates/blue/ce/davincisoc.png')
       self.tmpl_ce_gilckt = cv2.imread(self.path+'templates/blue/ce/gilckt.png')
       self.tmpl_ce_gilcktmlb = cv2.imread(self.path+'templates/blue/ce/gilcktmlb.png')
+      self.tmpl_ce_maidenmlb = cv2.imread(self.path+'templates/blue/ce/maidenmlb.png')
       # Servants also get their own section (for frontlining specific servants)
       self.tmpl_servant_waver1 = cv2.imread(self.path+'templates/blue/servant/waver1.png')
       self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
@@ -217,6 +218,11 @@ class Farmbot(Controller):
         self.tmpl_repeatquest = cv2.imread(self.path+'templates/blue/jprepeatquest.png')
         self.window_retrybutton = (758, 538, 918, 588)
         self.tmpl_retrybutton = cv2.imread(self.path+'templates/blue/jpretrybutton.png')
+        self.window_lottoresetbox = (1054, 232, 1224, 257)
+        self.tmpl_lottoresetbox = cv2.imread(self.path+'templates/blue/jplottoresetbox.png')
+        self.window_lottoresetclose = (567, 537, 707, 587)
+        self.tmpl_lottoresetclose = cv2.imread(self.path+'templates/blue/jplottoresetclose.png')
+        self.tmpl_ce_jpscafes = cv2.imread(self.path+'templates/blue/ce/jpscafes.png')
       
     else:
       # fail on other applications
@@ -395,6 +401,10 @@ class Farmbot(Controller):
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_gilckt
       elif self.supportce == 'gilcktmlb':
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_gilcktmlb
+      elif self.supportce == 'maidenmlb':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_maidenmlb
+      elif self.supportce == 'jpscafes':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_jpscafes
       else:
         trigger_tmpl1 = trigger_tmpl2 = None
       if self.supportservant == 'waver':
@@ -452,7 +462,7 @@ class Farmbot(Controller):
           if res == 0 or res == 1 or res == 2:
             self.cursor.moveclick(self.xy_support2)
             nomatch = False
-      else:
+      if nomatch:
         # check support 1 next
         res = self.checktrigger([trigger1])
         if res == 0:
@@ -578,8 +588,8 @@ class Farmbot(Controller):
       self.waitadvance(0.2)
       self.cursor.click(self.xy_next) # just to make sure
       self.waitadvance(0.2)
-      #self.cursor.click(self.xy_next) # just to make sure
-      #self.waitadvance(0.4)
+      self.cursor.click(self.xy_next) # just to make sure
+      self.waitadvance(0.4)
       #self.cursor.click(self.xy_next) # ladder event extra drop page
       #self.waitadvance(0.2)
       #self.cursor.click(self.xy_next) # just to make sure
@@ -680,7 +690,7 @@ class Farmbot(Controller):
     while (numruns < num) or (num == 0):
       if self.checkescape():
         break
-      selected = 0
+      #selected = 0
       self.cursor.moveclick(self.xy_expfeed)
       # Get to the select screen
       res = self.waituntiltrigger([self.trigger_fpenhancelock,self.trigger_fpenhancenone,self.trigger_fpenhanceselect])

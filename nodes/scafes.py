@@ -9,7 +9,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class JP_2Chrome(fb.Farmbot):
+class JP_Scafes(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../','jp')
     
@@ -21,61 +21,28 @@ class JP_2Chrome(fb.Farmbot):
     res = self.useskill(self.xy_skilla1)
     if res < 0:
       return -1
-    res = self.useskill(self.xy_skillc3)
+    res = self.useskill(self.xy_skillb1)
     if res < 0:
       return -1
-    # Attack
-    res = self.attack()
-    if res < 0:
-      return -1
-    # Card selection (pick 3)
-    self.usecard(self.xy_npc)
-    self.usecard(self.xy_card4)
-    self.usecard(self.xy_card3)
-    return 0
-  
-  def wave2(self):
-    res = self.advancewave()
-    if res < 0:
-      return -1
-    # Skills selection (may be empty)
     res = self.useskill(self.xy_skillc1)
     if res < 0:
       return -1
-    # Attack
-    res = self.attack()
+    res = self.useskill(self.xy_skillc2)
     if res < 0:
       return -1
-    # Card selection (pick 3)
-    self.usecard(self.xy_npa)
-    self.usecard(self.xy_card2)
-    self.usecard(self.xy_card3)
-    return 0
-  
-  def wave3(self):
-    res = self.advancewave()
+    res = self.seltarget(self.xy_targeta)
     if res < 0:
       return -1
-    # Skills selection (may be empty)
-    res = self.useskill(self.xy_skilla3)
+    res = self.useskill(self.xy_skillc3)
     if res < 0:
       return -1
-    res = self.plugsuit(self.xy_swap4, self.xy_swap1)
+    res = self.seltarget(self.xy_targeta)
     if res < 0:
       return -1
-    res = self.useskill(self.xy_skilla1)
+    res = self.plugsuit(self.xy_swap4, self.xy_swap3)
     if res < 0:
       return -1
-    res = self.seltarget(self.xy_targetb)
-    if res < 0:
-      return -1
-    res = self.useskill(self.xy_skilla2)
-    if res < 0:
-      return -1
-    res = self.useskill(self.xy_skillb3)
-    if res < 0:
-      return -1
-    res = self.usemcskill(self.xy_mcskill1)
+    res = self.useskill(self.xy_skillc1)
     if res < 0:
       return -1
     # Attack
@@ -87,17 +54,79 @@ class JP_2Chrome(fb.Farmbot):
     self.usecard(self.xy_card2)
     self.usecard(self.xy_card3)
     return 0
+  
+  def wave2(self):
+    res = self.advancewave()
+    if res < 0:
+      return -1
+    # Skills selection (may be empty)
+    res = self.useskill(self.xy_skillb3)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc2)
+    if res < 0:
+      return -1
+    res = self.seltarget(self.xy_targeta)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc3)
+    if res < 0:
+      return -1
+    res = self.seltarget(self.xy_targeta)
+    if res < 0:
+      return -1
+    # Attack
+    res = self.attack()
+    if res < 0:
+      return -1
+    # Card selection (pick 3)
+    self.usecard(self.xy_npa)
+    self.usecard(self.xy_card4)
+    self.usecard(self.xy_card3)
+    return 0
+  
+  def wave3(self):
+    res = self.advancewave()
+    if res < 0:
+      return -1
+    # Skills selection (may be empty)
+    res = self.useskill(self.xy_skilla2)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skilla3)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillb2)
+    if res < 0:
+      return -1
+    res = self.usemcskill(self.xy_mcskill1)
+    if res < 0:
+      return -1
+    # Attack
+    res = self.attack()
+    if res < 0:
+      return -1
+    # Card selection (pick 3)
+    self.usecard(self.xy_npa)
+    self.usecard(self.xy_card2)
+    self.usecard(self.xy_card3)
+    # Potential cleanup
+    res = self.cardcleanup(3)
+    return 0
     
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'bapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'skadi' # [waver,skadi]
+    self.supportce = 'jpscafes' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportservant = 'none' # [waver,skadi]
     self.saveframe = False
     
     while True:
       # Start quest (set it up for the farmer)
+      #res = self.startquest()
+      #if res < 0:
+      #  return -1
       # Repeat quest no longer uses the party screen
       # Battle procedure Wave1
       res = self.wave1()
@@ -120,6 +149,11 @@ class JP_2Chrome(fb.Farmbot):
       if self.runs >= nruns:
         res = self.norepeatquest()
         break
+        # Select node again (automatic refills)
+        #res = self.nodeselectrefill()
+        #if res < 0:
+        #  return -1
+        #continue
       # Repeat quest if not done (automatic refills)
       res = self.repeatquestrefill()
       if res < 0:
@@ -137,5 +171,5 @@ class JP_2Chrome(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = JP_2Chrome()
+  farmer = JP_Scafes()
   farmer.activate()
