@@ -179,13 +179,16 @@ class Farmbot(Controller):
       self.tmpl_fpenhanceokay = cv2.imread(self.path+'templates/blue/fpenhanceokay.png')
       # CEs get their own section (scaling is better in bluestacks, only one is needed)
       self.tmpl_ce_lunchtime = cv2.imread(self.path+'templates/blue/ce/lunchtime.png')
+      self.tmpl_ce_teatime = cv2.imread(self.path+'templates/blue/ce/teatime.png')
       self.tmpl_ce_monalisa = cv2.imread(self.path+'templates/blue/ce/monalisa.png')
+      self.tmpl_ce_bellalisa = cv2.imread(self.path+'templates/blue/ce/bellalisa.png')
       self.tmpl_ce_lesson = cv2.imread(self.path+'templates/blue/ce/lesson.png')
       self.tmpl_ce_training = cv2.imread(self.path+'templates/blue/ce/training.png')
       self.tmpl_ce_davincisoc = cv2.imread(self.path+'templates/blue/ce/davincisoc.png')
       self.tmpl_ce_gilckt = cv2.imread(self.path+'templates/blue/ce/gilckt.png')
       self.tmpl_ce_gilcktmlb = cv2.imread(self.path+'templates/blue/ce/gilcktmlb.png')
       self.tmpl_ce_maidenmlb = cv2.imread(self.path+'templates/blue/ce/maidenmlb.png')
+      self.tmpl_ce_teatimecf = cv2.imread(self.path+'templates/blue/ce/teatimecf.png')
       # Servants also get their own section (for frontlining specific servants)
       self.tmpl_servant_waver1 = cv2.imread(self.path+'templates/blue/servant/waver1.png')
       self.tmpl_servant_waver2 = cv2.imread(self.path+'templates/blue/servant/waver2.png')
@@ -193,6 +196,9 @@ class Farmbot(Controller):
       self.tmpl_servant_skadi1 = cv2.imread(self.path+'templates/blue/servant/skadi1.png')
       self.tmpl_servant_skadi2 = cv2.imread(self.path+'templates/blue/servant/skadi2.png')
       self.tmpl_servant_skadi3 = cv2.imread(self.path+'templates/blue/servant/skadi3.png')
+      self.tmpl_servant_reines1 = cv2.imread(self.path+'templates/blue/servant/reines1.png')
+      self.tmpl_servant_reines2 = cv2.imread(self.path+'templates/blue/servant/reines2.png')
+      self.tmpl_servant_reines3 = cv2.imread(self.path+'templates/blue/servant/reines3.png')
       
       # Replace some templates with jp stuff
       if self.region == 'jp':
@@ -389,8 +395,12 @@ class Farmbot(Controller):
     else: # TODO make sure these match the templates
       if self.supportce == 'lunchtime':
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lunchtime
+      elif self.supportce == 'teatime':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_teatime
       elif self.supportce == 'monalisa':
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_monalisa
+      elif self.supportce == 'bellalisa':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_bellalisa
       elif self.supportce == 'lesson':
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_lesson
       elif self.supportce == 'training':
@@ -405,6 +415,8 @@ class Farmbot(Controller):
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_maidenmlb
       elif self.supportce == 'jpscafes':
         trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_jpscafes
+      elif self.supportce == 'teatimecf':
+        trigger_tmpl1 = trigger_tmpl2 = self.tmpl_ce_teatimecf
       else:
         trigger_tmpl1 = trigger_tmpl2 = None
       if self.supportservant == 'waver':
@@ -415,6 +427,10 @@ class Farmbot(Controller):
         trigger_tmpl3 = self.tmpl_servant_skadi1
         trigger_tmpl4 = self.tmpl_servant_skadi2
         trigger_tmpl5 = self.tmpl_servant_skadi3
+      elif self.supportservant == 'reines':
+        trigger_tmpl3 = self.tmpl_servant_reines1
+        trigger_tmpl4 = self.tmpl_servant_reines2
+        trigger_tmpl5 = self.tmpl_servant_reines3
       else:
         trigger_tmpl3 = trigger_tmpl4 = trigger_tmpl5 = None
     # Generate CE templates
