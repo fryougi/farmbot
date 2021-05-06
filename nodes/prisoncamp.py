@@ -89,7 +89,7 @@ class Farmer_Prison(fb.Farmbot):
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
-    self.refilltype = 'sapple' # [rapple,gapple,sapple,bapple]
+    self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
     self.supportce = 'teatime' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False

@@ -2,7 +2,7 @@
 """
 DSS (2k4)
 
-Dondo
+Lancelot
 YourOwnSkader
 SupportSkader
 """
@@ -13,7 +13,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class Farmer_DSS(fb.Farmbot):
+class Farmer_Vday(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../')
     
@@ -22,7 +22,7 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skilla2)
+    res = self.useskill(self.xy_skilla3)
     if res < 0:
       return -1
     res = self.useskill(self.xy_skillb1)
@@ -61,12 +61,12 @@ class Farmer_DSS(fb.Farmbot):
     res = self.seltarget(self.xy_targeta)
     if res < 0:
       return -1
-    #res = self.usemcskill(self.xy_mcskill3)
-    #if res < 0:
-    #  return -1
-    #res = self.seltarget(self.xy_targeta)
-    #if res < 0:
-    #  return -1
+    res = self.plugsuit(self.xy_swap4, self.xy_swap2)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillb3)
+    if res < 0:
+      return -1
     # Attack
     res = self.attack()
     if res < 0:
@@ -82,12 +82,12 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
-    res = self.useskill(self.xy_skilla1)
+    res = self.useskill(self.xy_skillb1)
     if res < 0:
       return -1
-    #res = self.useskill(self.xy_skillb2)
-    #if res < 0:
-    #  return -1
+    res = self.seltarget(self.xy_targeta)
+    if res < 0:
+      return -1
     res = self.useskill(self.xy_skillc2)
     if res < 0:
       return -1
@@ -98,9 +98,6 @@ class Farmer_DSS(fb.Farmbot):
     if res < 0:
       return -1
     res = self.usemcskill(self.xy_mcskill1)
-    if res < 0:
-      return -1
-    res = self.seltarget(self.xy_targeta)
     if res < 0:
       return -1
     # Attack
@@ -120,9 +117,9 @@ class Farmer_DSS(fb.Farmbot):
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
-    self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'teatime' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'skadi' # [waver,skadi]
+    self.refilltype = 'gapple' # [rapple,gapple,sapple,bapple]
+    self.supportce = 'first' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportservant = 'none' # [waver,skadi]
     self.saveframe = False
     
     while True:
@@ -166,5 +163,5 @@ class Farmer_DSS(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = Farmer_DSS()
+  farmer = Farmer_Vday()
   farmer.activate()

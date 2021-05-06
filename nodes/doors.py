@@ -63,9 +63,9 @@ class Farmer_Doors(fb.Farmbot):
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
-    self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'monalisa' # [lunchtime,training,lesson,monalisa,eventspecific]
-    self.supportservant = 'none' # [waver,skadi]
+    self.refilltype = 'gapple' # [rapple,gapple,sapple,bapple]
+    self.supportce = 'teatime' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     
     while True:
