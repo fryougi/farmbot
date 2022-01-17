@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Doors
-
-AOE rider
+Xmas
 """
 # Adding to the system path is needed
 # because no longer in parent directory
@@ -11,7 +9,7 @@ import sys, os
 sys.path.append(os.path.abspath('../'))
 import farmbot as fb
 
-class Farmer_Doors(fb.Farmbot):
+class Xmas_Alt(fb.Farmbot):
   def __init__(self):
     fb.Farmbot.__init__(self,'blue','../')
     
@@ -20,6 +18,18 @@ class Farmer_Doors(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
+    res = self.useskill(self.xy_skillb1)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillb2)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillb3)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc3)
+    if res < 0:
+      return -1
     # Attack
     res = self.attack()
     if res < 0:
@@ -50,6 +60,18 @@ class Farmer_Doors(fb.Farmbot):
     if res < 0:
       return -1
     # Skills selection (may be empty)
+    res = self.useskill(self.xy_skilla2)
+    if res < 0:
+      return -1
+    res = self.useskill(self.xy_skillc1)
+    if res < 0:
+      return -1
+    res = self.usemcskill(self.xy_mcskill2)
+    if res < 0:
+      return -1
+    res = self.seltarget(self.xy_targeta)
+    if res < 0:
+      return -1
     # Attack
     res = self.attack()
     if res < 0:
@@ -58,12 +80,16 @@ class Farmer_Doors(fb.Farmbot):
     self.usecard(self.xy_npa)
     self.usecard(self.xy_card2)
     self.usecard(self.xy_card3)
+    # Potential cleanup
+    res = self.cardcleanup(3)
+    if res < 0:
+      return -1
     return 0
     
   def farm(self,nruns=1):
     self.runs = 0
     self.refills = 0
-    self.refilltype = 'bapple' # [rapple,gapple,sapple,bapple]
+    self.refilltype = 'rapple' # [rapple,gapple,sapple,bapple]
     self.supportce = 'first' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'none' # [waver,skadi]
     self.saveframe = False
@@ -109,5 +135,5 @@ class Farmer_Doors(fb.Farmbot):
     return
 
 if __name__ == "__main__":
-  farmer = Farmer_Doors()
+  farmer = Xmas_Alt()
   farmer.activate()

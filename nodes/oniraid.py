@@ -78,7 +78,7 @@ class Farmer_Raid(fb.Farmbot):
     self.runs = 0
     self.refills = 0
     self.refilltype = 'gapple' # [rapple,gapple,sapple,bapple]
-    self.supportce = 'lunchtime' # [lunchtime,training,lesson,monalisa,eventspecific]
+    self.supportce = 'none' # [lunchtime,training,lesson,monalisa,eventspecific]
     self.supportservant = 'skadi' # [waver,skadi]
     self.saveframe = False
     

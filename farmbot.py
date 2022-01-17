@@ -68,7 +68,8 @@ class Farmbot(Controller):
     self.xy_clickwave = (520,140)
     self.xy_clickdrop = (400,300)
     self.xy_clickcard = (25,140)
-    self.xy_next = (550,340)
+    #self.xy_next = (550,340)
+    self.xy_next = (550,320)
     # Refills
     self.xy_close = (318,310)
     self.xy_rapple = (330,80)
@@ -123,14 +124,15 @@ class Farmbot(Controller):
       self.window_attackbutton = (1067, 640, 1207, 680)
       self.window_mcskill = (1137, 255, 1252, 370)
       self.window_replacebutton = (562, 602, 722, 647)
-      self.window_nextbutton = (1033, 655, 1183, 705)
+      #self.window_nextbutton = (1033, 655, 1183, 705)
+      self.window_nextbutton = (1033, 617, 1183, 667)
       self.window_apclosebutton = (571, 598, 711, 643)
       self.window_apokbutton = (779, 539, 904, 589)
       self.window_support1ce = (51, 326, 209, 371)
       self.window_support2ce = (51, 526, 209, 571)
       self.window_support1servant = (51, 276, 101, 326)
       self.window_support2servant = (51, 476, 101, 526)
-      #self.window_lottoresetbox = (1058, 229, 1218, 259)
+      #self.window_lottoresetbox = (1056, 229, 1216, 259)
       #self.window_lottoresetbox = (1074, 231, 1204, 256)
       self.window_lottoresetbox = (1067, 232, 1207, 257)
       self.window_lottoresetclose = (571, 538, 711, 588)
@@ -139,6 +141,7 @@ class Farmbot(Controller):
       self.window_repeatquest = (749, 545, 929, 590)
       self.window_sendrequest = (829, 593, 1079, 638)
       self.window_fp10xsummon = (736, 526, 916, 586)
+      #self.window_fp10xsummon = (685, 496, 885, 556)
       self.window_fp10xrepeat = (659, 654, 869, 694)
       self.window_fpsummonokay = (789, 542, 889, 587)
       self.window_fpsummoncont = (684, 649, 844, 699)
@@ -148,6 +151,7 @@ class Farmbot(Controller):
       self.window_fpenhanceselect = (7, 218, 57, 268)
       self.window_fpenhancelock = (71, 241, 91, 257)
       self.window_fpenhanceokay = (786, 565, 896, 615)
+      self.window_fpenhanceservant = (1070, 8, 1270, 68)
       # List of template images
       self.tmpl_menubutton = cv2.imread(self.path+'templates/blue/menubutton.png')
       self.tmpl_selectsupport = cv2.imread(self.path+'templates/blue/selectsupport.png')
@@ -168,6 +172,7 @@ class Farmbot(Controller):
       self.tmpl_repeatquest = cv2.imread(self.path+'templates/blue/repeatquest.png')
       self.tmpl_sendrequest = cv2.imread(self.path+'templates/blue/sendrequest.png')
       self.tmpl_fp10xsummon = cv2.imread(self.path+'templates/blue/fp10xsummon.png')
+      #self.tmpl_fp10xsummon = cv2.imread(self.path+'templates/blue/fp10xsummon_2.png')
       self.tmpl_fp10xrepeat = cv2.imread(self.path+'templates/blue/fp10xrepeat.png')
       self.tmpl_fpsummonokay = cv2.imread(self.path+'templates/blue/fpsummonokay.png')
       self.tmpl_fpsummonclose = cv2.imread(self.path+'templates/blue/fpsummonclose.png')
@@ -177,6 +182,7 @@ class Farmbot(Controller):
       self.tmpl_fpenhanceselect = cv2.imread(self.path+'templates/blue/fpenhanceselect.png')
       self.tmpl_fpenhancelock = cv2.imread(self.path+'templates/blue/fpenhancelock.png')
       self.tmpl_fpenhanceokay = cv2.imread(self.path+'templates/blue/fpenhanceokay.png')
+      self.tmpl_fpenhanceservant = cv2.imread(self.path+'templates/blue/fpenhanceservant.png')
       # CEs get their own section (scaling is better in bluestacks, only one is needed)
       self.tmpl_ce_lunchtime = cv2.imread(self.path+'templates/blue/ce/lunchtime.png')
       self.tmpl_ce_teatime = cv2.imread(self.path+'templates/blue/ce/teatime.png')
@@ -238,12 +244,12 @@ class Farmbot(Controller):
     # List of tolerances for template match
     self.tol_menubutton = 0.9990
     self.tol_selectsupport = 0.9990
-    self.tol_confirmsetup = 0.9990
+    self.tol_confirmsetup = 0.9930
     self.tol_startquest = 0.9990
     self.tol_attackbutton = 0.9900
-    self.tol_mcskill = 0.9950
+    self.tol_mcskill = 0.9930
     self.tol_replacebutton = 0.9990
-    self.tol_nextbutton = 0.9990
+    self.tol_nextbutton = 0.9970
     self.tol_apclosebutton = 0.9990
     self.tol_apokbutton = 0.9990
     self.tol_lottoresetbox = 0.9990
@@ -252,7 +258,7 @@ class Farmbot(Controller):
     self.tol_updateclose = 0.9990
     self.tol_repeatquest = 0.9990
     self.tol_sendrequest = 0.9990
-    self.tol_fp10xsummon = 0.9990
+    self.tol_fp10xsummon = 0.9900
     self.tol_fp10xrepeat = 0.9990
     self.tol_fpsummonokay = 0.9990
     self.tol_fpsummonclose = 0.9990
@@ -262,6 +268,7 @@ class Farmbot(Controller):
     self.tol_fpenhanceselect = 0.9990
     self.tol_fpenhancelock = 0.9990
     self.tol_fpenhanceokay = 0.9990
+    self.tol_fpenhanceservant = 0.9990
     self.tol_ceselect = 0.9970
     self.tol_servantselect = 0.9970
       
@@ -293,10 +300,11 @@ class Farmbot(Controller):
     self.trigger_fpenhanceselect = (self.window_fpenhanceselect, self.tmpl_fpenhanceselect, None, self.tol_fpenhanceselect)
     self.trigger_fpenhancelock = (self.window_fpenhancelock, self.tmpl_fpenhancelock, None, self.tol_fpenhancelock)
     self.trigger_fpenhanceokay = (self.window_fpenhanceokay, self.tmpl_fpenhanceokay, None, self.tol_fpenhanceokay)
+    self.trigger_fpenhanceservant = (self.window_fpenhanceservant, self.tmpl_fpenhanceservant, None, self.tol_fpenhanceservant)
   
     # OCR Windows/Templates
-    self.ocrwindow_wavetext = (854, 8, 924, 40)
-    self.ocrtol_wavetext = 0.9900
+    self.ocrwindow_wavetext = (872, 8, 942, 40)
+    self.ocrtol_wavetext = 0.9800
     self.ocrtmpl_wave1 = cv2.imread(self.path+'templates/blue/ocr/1of3.png')
     self.ocrtmpl_wave1mask = cv2.imread(self.path+'templates/blue/ocr/1of3mask.png')
     self.ocrtmpl_wave2 = cv2.imread(self.path+'templates/blue/ocr/2of3.png')
@@ -604,8 +612,8 @@ class Farmbot(Controller):
       self.waitadvance(0.2)
       self.cursor.click(self.xy_next) # just to make sure
       self.waitadvance(0.2)
-      self.cursor.click(self.xy_next) # just to make sure
-      self.waitadvance(0.4)
+      #self.cursor.click(self.xy_next) # just to make sure
+      #self.waitadvance(0.4)
       #self.cursor.click(self.xy_next) # ladder event extra drop page
       #self.waitadvance(0.2)
       #self.cursor.click(self.xy_next) # just to make sure
@@ -790,6 +798,65 @@ class Farmbot(Controller):
       elif res == 1:
         return num10xs
     return res
+
+  # Friend point summoning CE bombs
+  def enhanceservant(self, num=0):
+    numruns = 0
+    while (numruns < num) or (num == 0):
+      if self.checkescape():
+        break
+      #selected = 0
+      self.cursor.moveclick(self.xy_expfeed)
+      # Get to the select screen
+      res = self.waituntiltrigger([self.trigger_fpenhancelock,self.trigger_fpenhancenone,self.trigger_fpenhanceselect])
+      # If the first CE is locked (e.g. by acquisition), finish
+      if res < 2:
+        break
+      # This selects CEs individually based on the older version...
+      #while selected < 20:
+      #  for yexp in self.xy_expyloc:
+      #    for xexp in self.xy_expxloc:
+      #      xy_exp = (xexp,yexp)
+      #      self.cursor.moveclick(xy_exp)
+      #      self.waitadvance(0.02)
+      #      selected += 1
+      #      if selected >= 20:
+      #        break
+      #    if selected >= 20:
+      #      break
+      # This selects CEs using a click hold move release action
+      xy_start = (self.xy_expxloc[0],self.xy_expyloc[0])
+      xy_stop = (self.xy_expxloc[5],self.xy_expyloc[2])
+      self.cursor.clickselect(xy_start,xy_stop)
+      self.waitadvance(0.4)
+      self.cursor.moveclick(self.xy_invokay)
+      self.waitadvance(0.4)
+      res = self.waituntiltrigger([self.trigger_fpenhanceservant])
+      if res >= 0:
+        self.cursor.moveclick(self.xy_invenhance)
+        self.waitadvance(0.2) #for good measure
+        self.cursor.moveclick(self.xy_invenhance)
+        res = self.waituntiltrigger([self.trigger_fpenhanceokay])
+        if res >= 0:
+          self.cursor.moveclick(self.xy_invconfirm)
+          self.waitadvance(0.4)
+          self.cursor.click(self.xy_invconfirm)
+          self.waitadvance(0.4)
+          self.cursor.click(self.xy_invconfirm)
+          self.waitadvance(0.4)
+          self.cursor.click(self.xy_invconfirm)
+          res = self.clickuntiltrigger([self.trigger_fpenhanceservant],self.xy_invconfirm)
+          if res >= 0:
+            self.waitadvance(0.4)
+          else:
+            break
+        else:
+          break
+      else:
+        break
+      numruns += 1
+    return numruns
+  
 
 if __name__ == "__main__":
   farmer = Farmbot()

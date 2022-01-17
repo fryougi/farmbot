@@ -30,7 +30,8 @@ class Cursor():
       if app == 'blue':
         # resize window because bluestacks is dumb about resolution
         x0, y0, x1, y1 = win32gui.GetWindowRect(self.hwnd)
-        win32gui.MoveWindow(self.hwnd, x0, y0, 1285, 764, True)
+        win32gui.MoveWindow(self.hwnd, x0, y0, 1282, 754, True)
+        #win32gui.MoveWindow(self.hwnd, x0, y0, 1285, 764, True)
       self.rect = win32gui.GetWindowPlacement(self.hwnd)[-1]
     self.xres = win32api.GetSystemMetrics(0)
     self.yres = win32api.GetSystemMetrics(1)
@@ -38,8 +39,8 @@ class Cursor():
     # (originally developed for samsung smart view)
     if app == 'blue':
       # Just have horizontal bluestacks
-      self.xleft = 2
-      self.ytop = 42
+      self.xleft = 1
+      self.ytop = 33#42
       self.xtol = 1280
       self.ytol = 720
     # set valid cursor locations
