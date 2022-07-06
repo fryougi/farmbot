@@ -127,7 +127,7 @@ class Farmbot(Controller):
       #self.window_nextbutton = (1033, 655, 1183, 705)
       self.window_nextbutton = (1033, 617, 1183, 667)
       self.window_apclosebutton = (571, 598, 711, 643)
-      self.window_apokbutton = (779, 539, 904, 589)
+      self.window_apokbutton = (762, 541, 932, 586)
       self.window_support1ce = (51, 326, 209, 371)
       self.window_support2ce = (51, 526, 209, 571)
       self.window_support1servant = (51, 276, 101, 326)
@@ -137,7 +137,7 @@ class Farmbot(Controller):
       self.window_lottoresetbox = (1067, 232, 1207, 257)
       self.window_lottoresetclose = (571, 538, 711, 588)
       self.window_retrybutton = (773, 542, 903, 587)
-      self.window_updateclose = (564, 537, 714, 587)
+      self.window_updateclose = (566, 540, 716, 585)
       self.window_repeatquest = (749, 545, 929, 590)
       self.window_sendrequest = (829, 593, 1079, 638)
       self.window_fp10xsummon = (736, 526, 916, 586)
@@ -503,7 +503,7 @@ class Farmbot(Controller):
       while True:
         self.waitadvance(0.5)
         self.cursor.moveclick(self.xy_supdate)
-        self.waitadvance(0.75) # wait for dialog to pop up
+        self.waitadvance(2.0) # wait for dialog to pop up
         # Update support (should actually wait on both triggers)
         res = self.checktrigger([self.trigger_updateclose])
         if res < 0:
@@ -612,12 +612,12 @@ class Farmbot(Controller):
       self.waitadvance(0.2)
       self.cursor.click(self.xy_next) # just to make sure
       self.waitadvance(0.2)
-      #self.cursor.click(self.xy_next) # just to make sure
-      #self.waitadvance(0.4)
-      #self.cursor.click(self.xy_next) # ladder event extra drop page
-      #self.waitadvance(0.2)
-      #self.cursor.click(self.xy_next) # just to make sure
-      #self.waitadvance(0.2)
+      self.cursor.click(self.xy_next) # just to make sure
+      self.waitadvance(0.4)
+      self.cursor.click(self.xy_next) # ladder event extra drop page
+      self.waitadvance(0.2)
+      self.cursor.click(self.xy_next) # just to make sure
+      self.waitadvance(0.2)
     return res
   
   def getwaveocr(self):

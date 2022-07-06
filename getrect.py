@@ -7,8 +7,8 @@ import numpy
 import cv2
 
 # Load image
-cvimage = cv2.imread('screencaps/frame60.png')
-tmpl = cv2.imread('templates/blue/ocr/3of3.png')
+cvimage = cv2.imread('screencaps/frame93.png')
+tmpl = cv2.imread('templates/blue/updateclose_2.png')
 #mask = cv2.imread('templates/blue/ocr/3of3mask.png')
 
 # for nox
