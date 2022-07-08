@@ -205,6 +205,9 @@ class Farmbot(Controller):
       self.tmpl_servant_reines1 = cv2.imread(self.path+'templates/blue/servant/reines1.png')
       self.tmpl_servant_reines2 = cv2.imread(self.path+'templates/blue/servant/reines2.png')
       self.tmpl_servant_reines3 = cv2.imread(self.path+'templates/blue/servant/reines3.png')
+      self.tmpl_servant_castoria1 = cv2.imread(self.path+'templates/blue/servant/castoria1.png')
+      self.tmpl_servant_castoria2 = cv2.imread(self.path+'templates/blue/servant/castoria2.png')
+      self.tmpl_servant_castoria3 = cv2.imread(self.path+'templates/blue/servant/castoria3.png')
       
       # Replace some templates with jp stuff
       if self.region == 'jp':
@@ -439,6 +442,10 @@ class Farmbot(Controller):
         trigger_tmpl3 = self.tmpl_servant_reines1
         trigger_tmpl4 = self.tmpl_servant_reines2
         trigger_tmpl5 = self.tmpl_servant_reines3
+      elif self.supportservant == 'castoria':
+        trigger_tmpl3 = self.tmpl_servant_castoria1
+        trigger_tmpl4 = self.tmpl_servant_castoria2
+        trigger_tmpl5 = self.tmpl_servant_castoria3
       else:
         trigger_tmpl3 = trigger_tmpl4 = trigger_tmpl5 = None
     # Generate CE templates
